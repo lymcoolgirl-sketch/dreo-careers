@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>加入 DREO — 招聘</title>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-100: #f5f5f5;
+    --gray-200: #e8e8e8;
+    --gray-400: #999;
+    --gray-600: #555;
+    --gray-800: #222;
+    --accent: #0a0a0a;
+    --radius: 12px;
+    --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .nav-logo {
+    font-size: 20px; font-weight: 800; letter-spacing: 0.08em;
+    color: var(--black); text-decoration: none;
+  }
+
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 14px; color: var(--gray-600); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--black); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    background: var(--black);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #1a1a2e 0%, #0a0a0a 100%);
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gray-400);
+    border: 1px solid #333; border-radius: 100px;
+    padding: 6px 16px; margin-bottom: 32px;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 80px);
+    font-weight: 800; line-height: 1.1;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, #fff 0%, #888 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 18px; color: #aaa; line-height: 1.8;
+    max-width: 560px; margin: 0 auto 48px;
+  }
+
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--white); color: var(--black);
+    font-size: 15px; font-weight: 600;
+    padding: 14px 32px; border-radius: 100px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,255,255,0.15); }
+
+  .hero-stats {
+    position: relative; z-index: 1;
+    display: flex; gap: 48px; margin-top: 80px;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 800; color: var(--white); }
+  .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; letter-spacing: 0.05em; }
+
+  /* ── Section ── */
+  section { padding: 100px 24px; }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  .section-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gray-400);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-desc {
+    font-size: 16px; color: var(--gray-600);
+    max-width: 560px; line-height: 1.8;
+  }
+
+  /* ── Why DREO ── */
+  .why { background: var(--gray-100); }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px; margin-top: 56px;
+  }
+
+  .why-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    border: 1px solid var(--gray-200);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .why-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
+
+  .why-icon {
+    width: 44px; height: 44px;
+    background: var(--black); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .why-icon svg { color: var(--white); }
+
+  .why-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+  .why-card p { font-size: 14px; color: var(--gray-600); line-height: 1.7; }
+
+  /* ── Jobs ── */
+  .jobs-header {
+    display: flex; align-items: flex-end;
+    justify-content: space-between; flex-wrap: wrap;
+    gap: 16px; margin-bottom: 48px;
+  }
+
+  .job-count {
+    font-size: 14px; color: var(--gray-400);
+    padding: 6px 14px; background: var(--gray-100);
+    border-radius: 100px;
+  }
+
+  .job-list { display: flex; flex-direction: column; gap: 20px; }
+
+  .job-card {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .job-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+
+  .job-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 32px; cursor: pointer;
+    gap: 16px;
+  }
+
+  .job-card-left { flex: 1; }
+
+  .job-meta {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .tag-dept { background: #f0f0f0; color: var(--gray-600); }
+  .tag-loc  { background: #f0f0f0; color: var(--gray-600); }
+  .tag-type { background: var(--black); color: var(--white); }
+
+  .job-title { font-size: 20px; font-weight: 700; }
+  .job-exp { font-size: 13px; color: var(--gray-400); margin-top: 6px; }
+
+  .job-toggle-btn {
+    width: 36px; height: 36px; flex-shrink: 0;
+    border: 1px solid var(--gray-200); border-radius: 50%;
+    background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.3s;
+  }
+  .job-toggle-btn.open { background: var(--black); }
+  .job-toggle-btn.open svg { color: white; }
+  .job-toggle-btn.open { transform: rotate(0deg); }
+  .job-toggle-btn svg { transition: transform 0.3s; }
+  .job-toggle-btn.open svg { transform: rotate(45deg); }
+
+  .job-body {
+    display: none;
+    padding: 0 32px 32px;
+    border-top: 1px solid var(--gray-200);
+  }
+  .job-body.open { display: block; }
+
+  .job-section { margin-top: 28px; }
+  .job-section h4 {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--gray-400);
+    margin-bottom: 14px;
+  }
+  .job-section ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .job-section li {
+    font-size: 14px; color: var(--gray-800); line-height: 1.7;
+    padding-left: 16px; position: relative;
+  }
+  .job-section li::before {
+    content: ''; position: absolute; left: 0; top: 10px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--black);
+  }
+
+  .job-plus { margin-top: 20px; }
+  .job-plus h4 { color: var(--gray-400); }
+  .job-plus li::before { background: var(--gray-400); }
+
+  .apply-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 28px;
+    background: var(--black); color: var(--white);
+    font-size: 14px; font-weight: 600;
+    padding: 12px 28px; border-radius: 100px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .apply-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* ── Process ── */
+  .process { background: var(--black); color: var(--white); }
+  .process .section-title { color: var(--white); }
+  .process .section-desc { color: #aaa; }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2px; margin-top: 56px;
+    background: #222; border-radius: var(--radius); overflow: hidden;
+  }
+
+  .process-step {
+    background: var(--black);
+    padding: 32px 24px;
+    position: relative;
+  }
+
+  .step-num {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    color: #555; margin-bottom: 16px;
+  }
+  .step-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .step-desc { font-size: 13px; color: #888; line-height: 1.6; }
+
+  /* ── Apply ── */
+  .apply-section { background: var(--gray-100); text-align: center; }
+  .apply-section .section-title { margin: 0 auto 16px; }
+  .apply-section .section-desc { margin: 0 auto 40px; text-align: center; }
+
+  .apply-box {
+    display: inline-flex; flex-direction: column; align-items: center;
+    gap: 20px;
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: 20px; padding: 48px 56px;
+    max-width: 480px; width: 100%;
+  }
+
+  .apply-email {
+    font-size: 18px; font-weight: 700;
+    color: var(--black); text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+
+  .apply-note { font-size: 13px; color: var(--gray-400); line-height: 1.7; text-align: center; }
+
+  .apply-main-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--black); color: var(--white);
+    font-size: 15px; font-weight: 600;
+    padding: 14px 36px; border-radius: 100px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 100%; justify-content: center;
+  }
+  .apply-main-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--black); color: #666;
+    padding: 40px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 13px;
+  }
+  footer a { color: #666; text-decoration: none; }
+  footer a:hover { color: #aaa; }
+  .footer-logo { font-size: 16px; font-weight: 800; color: var(--white); letter-spacing: 0.08em; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 72px 20px; }
+    .job-card-header { padding: 20px; }
+    .job-body { padding: 0 20px 24px; }
+    .hero-stats { gap: 32px; }
+    .apply-box { padding: 36px 24px; }
+    footer { padding: 32px 20px; flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="#">DREO</a>
+  <div class="nav-links">
+    <a href="#why">为什么选择我们</a>
+    <a href="#jobs">开放岗位</a>
+    <a href="#process">招聘流程</a>
+    <a href="#apply">立即投递</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag">Hesung 和生创新 · AIoT 软件创新部门</div>
+    <h1>用 AI 重新定义<br><span>智能家居体验</span></h1>
+    <p>我们正在寻找对用户有深度洞察、对技术有真实热情的产品人，一起打造下一代智能厨电产品。</p>
+    <a class="hero-cta" href="#jobs">
+      查看开放岗位
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">300+</div>
+      <div class="stat-label">专利技术</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2500万+</div>
+      <div class="stat-label">全球销量</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">11,000+</div>
+      <div class="stat-label">零售合作门店</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">50万+</div>
+      <div class="stat-label">活跃 App 用户</div>
+    </div>
+  </div>
+</section>
+
+<!-- Why DREO -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="section-tag">为什么选择我们</div>
+    <h2 class="section-title">不只是一份工作，<br>是真正的产品创造</h2>
+    <p class="section-desc">我们是一支由国内重点高校和欧美海外从业背景构成的产品团队，用 AI 能力驱动智能家电体验创新，从产品定义到用户运营完整链路。</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>AI 原生产品环境</h3>
+        <p>深度应用大模型、Prompt Engineering、Agent 设计，不是追概念，是真实的产品落地场景。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h3>全链路产品权责</h3>
+        <p>从用户调研、产品定义到研发落地、数据运营，你会拥有完整的产品决策权，而不只是执行环节。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>顶尖背景团队</h3>
+        <p>团队成员来自国内重点高校及欧美知名企业，拥有极强的用户洞察力与跨文化产品视野。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>全球化产品舞台</h3>
+        <p>DREO 产品销往全球，你设计的功能会直接影响数百万真实用户，不是内网项目，是真实市场检验。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>快节奏高密度成长</h3>
+        <p>小团队扁平结构，想法到落地周期极短，避开大厂的层级消耗，每个人的贡献都清晰可见。</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>双休 · 有竞争力薪资</h3>
+        <p>双休保障，薪资对标互联网行业同级别，提供股权激励机会，优秀人才我们愿意给到市场顶格。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Jobs -->
+<section id="jobs">
+  <div class="container">
+    <div class="jobs-header">
+      <div>
+        <div class="section-tag">开放岗位</div>
+        <h2 class="section-title">找到适合你的位置</h2>
+      </div>
+      <span class="job-count">2 个开放岗位</span>
+    </div>
+
+    <div class="job-list">
+
+      <!-- JD 1 -->
+      <div class="job-card">
+        <div class="job-card-header" onclick="toggleJob(this)">
+          <div class="job-card-left">
+            <div class="job-meta">
+              <span class="tag tag-dept">产品</span>
+              <span class="tag tag-loc">深圳</span>
+              <span class="tag tag-type">全职</span>
+            </div>
+            <div class="job-title">AI 产品经理 · 智能厨电产品</div>
+            <div class="job-exp">3–5 年经验 · 本科及以上</div>
+          </div>
+          <button class="job-toggle-btn" tabindex="-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <div class="job-body">
+          <div class="job-section">
+            <h4>岗位职责</h4>
+            <ul>
+              <li>通过用户调研、VOC 分析、可用性测试等方式建立用户洞察，将洞察转化为体验设计方向与产品需求</li>
+              <li>主导 App 核心场景的体验设计与交互逻辑，将 AI 能力转化为符合用户直觉的产品体验</li>
+              <li>结合 AI 技术（如大模型应用场景）探索产品创新方向，从用户价值出发设计智能化功能的完整体验闭环</li>
+              <li>负责 DREO App 具体模块的方案设计与体验把控，与交互、UI 设计师协同产出，同时对方案的产品逻辑与落地可行性负责</li>
+              <li>关注产品运营情况（数据及业务反馈），对 App 用户体验相关指标（留存、活跃度等）负责，持续优化迭代</li>
+              <li>与硬件、固件端、开发端协同，跟进项目开发进度，推动设计方案落地上线</li>
+            </ul>
+          </div>
+          <div class="job-section">
+            <h4>任职资格</h4>
+            <ul>
+              <li>本科及以上学历，3–5 年互联网 / 智能硬件 / 家电行业产品设计或产品经理经验</li>
+              <li>具备 App 产品或核心功能模块的全流程经验，兼具设计敏感度与产品经理级别的需求管理、跨团队推动能力</li>
+              <li>对用户体验设计有深入研究，具备较强的用户洞察力与同理心，能与用户研究团队配合推动 VOC 分析</li>
+              <li>熟练掌握 Figma 等设计工具及思维导图、在线文档等办公工具，具备 AI 工具应用经历者优先</li>
+              <li>熟悉开发流程，思维清晰、逻辑性强，能有效推动团队协作与资源整合</li>
+            </ul>
+          </div>
+          <div class="job-section job-plus">
+            <h4>加分项</h4>
+            <ul>
+              <li>对烹饪和智能厨电有所了解，好奇心强，有探索欲</li>
+              <li>有海外生活或工作经历，能促进中外文化对接</li>
+              <li>能通过 AI 手搓一个产品原型，熟悉 Web Coding</li>
+              <li>具备 AI 原生工作流的学习能力，以及总结沉淀方法论的能力</li>
+            </ul>
+          </div>
+          <a class="apply-btn" href="mailto:kaia.lyu@dreo.com?subject=应聘｜AI产品经理·智能厨电产品">
+            立即投递简历
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- JD 2 -->
+      <div class="job-card">
+        <div class="job-card-header" onclick="toggleJob(this)">
+          <div class="job-card-left">
+            <div class="job-meta">
+              <span class="tag tag-dept">产品</span>
+              <span class="tag tag-loc">深圳</span>
+              <span class="tag tag-type">全职</span>
+            </div>
+            <div class="job-title">AI 产品经理 · APP AI 产品设计</div>
+            <div class="job-exp">3–5 年经验 · 本科及以上</div>
+          </div>
+          <button class="job-toggle-btn" tabindex="-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <div class="job-body">
+          <div class="job-section">
+            <h4>岗位职责</h4>
+            <ul>
+              <li>结合 AI 技术探索智能家电产品智能化创新方向，主导核心算法 / 模型能力从 0 到 1 的产品化落地</li>
+              <li>负责 App 内 AI 相关模块的方案设计，把控功能实现与交互体验的合理性（侧重技术实现路径把关）</li>
+              <li>与算法、后端开发团队深度协同，推动技术可行性评估与落地</li>
+              <li>与硬件、固件端、开发端协同，跟进 AI 相关功能开发进度，推动产品方案上线</li>
+              <li>关注 AI 功能的效果数据（如识别准确率、响应时长、模型评测指标等），持续优化迭代</li>
+              <li>规范 AI 产品开发流程及方法，推进产品开发高效完成</li>
+            </ul>
+          </div>
+          <div class="job-section">
+            <h4>任职资格</h4>
+            <ul>
+              <li>本科及以上学历，计算机、人工智能、软件工程等相关专业优先，3–5 年 AI / 大模型相关产品经验</li>
+              <li>具备大模型应用开发或 AI 产品设计经验，熟悉 Prompt Engineering、RAG、Agent 等相关技术概念</li>
+              <li>熟悉开发流程，具备较强的技术理解力和逻辑分析能力，能与算法 / 开发团队进行深度技术对话</li>
+              <li>对用户侧需求有基本理解，核心关注技术实现路径与 AI 能力边界的产品化判断</li>
+            </ul>
+          </div>
+          <div class="job-section job-plus">
+            <h4>加分项</h4>
+            <ul>
+              <li>对烹饪和智能厨电有所了解，好奇心强，有探索欲</li>
+              <li>有海外生活或工作经历，能促进中外文化对接</li>
+              <li>具备研发背景 / 能独立开发项目原型</li>
+              <li>能在技术框架和业务框架上同时提出创新方向</li>
+            </ul>
+          </div>
+          <a class="apply-btn" href="mailto:kaia.lyu@dreo.com?subject=应聘｜AI产品经理·APP AI产品设计">
+            立即投递简历
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="process" id="process">
+  <div class="container">
+    <div class="section-tag" style="color:#555">招聘流程</div>
+    <h2 class="section-title">透明、高效、尊重每位候选人</h2>
+    <p class="section-desc">我们的招聘流程简洁明快，通常 2 周内完成，全程保持沟通透明。</p>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-title">投递简历</div>
+        <div class="step-desc">发送简历至招聘邮箱，附上你认为能体现能力的项目案例或作品集</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-title">简历筛选</div>
+        <div class="step-desc">HR 3 个工作日内反馈，进入下一轮的候选人会收到面试邀请</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-title">一面 · 业务面</div>
+        <div class="step-desc">与业务负责人进行 60 分钟深度交流，聚焦过往项目经历与产品思维</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-title">二面 · 综合面</div>
+        <div class="step-desc">与团队负责人进行沟通，了解双方的契合度与发展预期</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">05</div>
+        <div class="step-title">Offer</div>
+        <div class="step-desc">面试通过后 3 个工作日内发出 Offer，期待你的加入</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Apply CTA -->
+<section class="apply-section" id="apply">
+  <div class="container" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="section-tag">立即投递</div>
+    <h2 class="section-title" style="text-align:center;">准备好了吗？</h2>
+    <p class="section-desc" style="text-align:center;">发送你的简历和作品集，让我们看看你能带来什么。</p>
+    <div class="apply-box">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <a class="apply-email" href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
+      <p class="apply-note">请在邮件标题注明应聘岗位，并附上简历（PDF 格式）<br>及能体现你能力的项目案例或作品集</p>
+      <a class="apply-main-btn" href="mailto:kaia.lyu@dreo.com?subject=应聘｜DREO AIoT 产品岗位">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        发送简历
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span class="footer-logo">DREO</span>
+  <span>© 2024 Hesung 和生创新 · AIoT 软件创新部门</span>
+  <a href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
+</footer>
+
+<script>
+  function toggleJob(header) {
+    const card = header.closest('.job-card');
+    const body = card.querySelector('.job-body');
+    const btn  = card.querySelector('.job-toggle-btn');
+    const isOpen = body.classList.contains('open');
+    // close all
+    document.querySelectorAll('.job-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.job-toggle-btn').forEach(b => b.classList.remove('open'));
+    // open clicked if it was closed
+    if (!isOpen) {
+      body.classList.add('open');
+      btn.classList.add('open');
+      setTimeout(() => header.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
+  }
+</script>
+</body>
+</html>
