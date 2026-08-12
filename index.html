@@ -388,6 +388,44 @@
   footer a:hover { color: #aaa; }
   .footer-logo { font-size: 16px; font-weight: 800; color: var(--white); letter-spacing: 0.08em; }
 
+  /* ── Achievements Strip ── */
+  .achievements {
+    background: #0a0a0a;
+    padding: 60px 24px;
+    border-top: 1px solid #1a1a1a;
+  }
+  .achievements-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; flex-wrap: wrap;
+    gap: 0; justify-content: center;
+  }
+  .ach-item {
+    flex: 1 1 160px;
+    text-align: center;
+    padding: 0 32px;
+    border-right: 1px solid #1e1e1e;
+  }
+  .ach-item:last-child { border-right: none; }
+  .ach-num {
+    font-size: 30px; font-weight: 800; color: #fff;
+    letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+  .ach-label {
+    font-size: 11px; color: #555;
+    letter-spacing: 0.05em; line-height: 1.6;
+  }
+  .media-row {
+    max-width: 1100px; margin: 44px auto 0;
+    display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center;
+  }
+  .media-chip {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.07em; color: #555;
+    border: 1px solid #222; border-radius: 100px;
+    padding: 5px 14px;
+  }
+
   /* ── Responsive ── */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -421,7 +459,7 @@
   <div class="hero-content">
     <div class="hero-tag">Hesung 和生创新 · AIoT 软件创新部门</div>
     <h1>用 AI 重新定义<br><span>智能家居体验</span></h1>
-    <p>我们正在寻找对用户有深度洞察、对技术有真实热情的产品人，一起打造下一代智能厨电产品。</p>
+    <p>在北美智能家电多品类市场连续领跑的 DREO，正在构建下一代 AI 驱动的产品体验。我们需要的，是愿意把 AI 能力真正变成用户价值的产品人。</p>
     <a class="hero-cta" href="#jobs">
       查看开放岗位
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -441,8 +479,8 @@
       <div class="stat-label">零售合作门店</div>
     </div>
     <div class="stat">
-      <div class="stat-num">50万+</div>
-      <div class="stat-label">活跃 App 用户</div>
+      <div class="stat-num">100万+</div>
+      <div class="stat-label">累计 IoT 设备</div>
     </div>
   </div>
 </section>
@@ -452,7 +490,7 @@
   <div class="container">
     <div class="section-tag">我们的产品</div>
     <h2 class="section-title">从厨房到客厅，<br>用 AI 重塑每个家居场景</h2>
-    <p class="section-desc">DREO 覆盖智能厨电、空气舒适两大品类，在全球 11,000+ 零售门店销售，累计超 2500 万台。</p>
+    <p class="section-desc">DREO 覆盖智能厨电、空气舒适两大品类，在全球 11,000+ 零售门店销售，累计超 2500 万台。ChefMaker 荣获 CES Innovation Award 及 iF Design Award 2023，BaristaMaker 连续登顶 Kickstarter 年度众筹冠军。</p>
   </div>
   <div class="product-scroll-wrapper">
     <div class="product-track" id="product-track">
@@ -512,6 +550,48 @@
   </div>
 </section>
 
+<!-- Achievements Strip -->
+<div class="achievements">
+  <div class="achievements-inner">
+    <div class="ach-item">
+      <div class="ach-num">30亿+</div>
+      <div class="ach-label">2025 年预计<br>销售收入</div>
+    </div>
+    <div class="ach-item">
+      <div class="ach-num">80%+</div>
+      <div class="ach-label">四年复合<br>增长率 CAGR</div>
+    </div>
+    <div class="ach-item">
+      <div class="ach-num">260+</div>
+      <div class="ach-label">"最佳产品"<br>榜单入选</div>
+    </div>
+    <div class="ach-item">
+      <div class="ach-num">100+</div>
+      <div class="ach-label">国际媒体<br>报道奖项</div>
+    </div>
+    <div class="ach-item">
+      <div class="ach-num">4.9 ★</div>
+      <div class="ach-label">App Store<br>智能家居品类最高评分</div>
+    </div>
+  </div>
+  <div class="media-row">
+    <span class="media-chip">CNN</span>
+    <span class="media-chip">Forbes</span>
+    <span class="media-chip">CNET</span>
+    <span class="media-chip">TIME</span>
+    <span class="media-chip">GQ</span>
+    <span class="media-chip">NBC</span>
+    <span class="media-chip">WIRED</span>
+    <span class="media-chip">The Guardian</span>
+    <span class="media-chip">Business Insider</span>
+    <span class="media-chip">Good Housekeeping</span>
+    <span class="media-chip">CES Innovation Award</span>
+    <span class="media-chip">iF Design Award</span>
+    <span class="media-chip">Kickstarter 众筹冠军 ×2</span>
+    <span class="media-chip">CES · IFA · IHS</span>
+  </div>
+</div>
+
 <!-- Why DREO -->
 <section class="why" id="why">
   <div class="container">
@@ -524,7 +604,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
         <h3>AI 原生产品环境</h3>
-        <p>深度应用大模型、Prompt Engineering、Agent 设计，不是追概念，是真实的产品落地场景。</p>
+        <p>AI 产品路线图从 Chef Mode 迭代到 Multi-Agent 烹饪智能体（3.0），深度落地大模型、Prompt Engineering 与 Agent 设计，是引领行业的 AI 产品实践，而不是追概念。</p>
       </div>
       <div class="why-card">
         <div class="why-icon">
@@ -538,14 +618,14 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
         <h3>顶尖背景团队</h3>
-        <p>团队成员来自国内重点高校及欧美知名企业，拥有极强的用户洞察力与跨文化产品视野。</p>
+        <p>60% 产研人员占比，团队成员来自国内重点高校及欧美知名企业，持有 300+ 自研专利，拥有极强的跨文化产品视野。</p>
       </div>
       <div class="why-card">
         <div class="why-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
         <h3>全球化产品舞台</h3>
-        <p>DREO 产品销往全球，你设计的功能会直接影响数百万真实用户，不是内网项目，是真实市场检验。</p>
+        <p>DREO 产品销往全球，入选 CNN、Forbes、CNET、TIME 等 100+ 国际媒体，亮相 CES、IFA、IHS 三大展会。你设计的功能将直接影响数百万真实用户，是经得起全球市场检验的产品。</p>
       </div>
       <div class="why-card">
         <div class="why-icon">
@@ -746,7 +826,7 @@
 <!-- Footer -->
 <footer>
   <span class="footer-logo">DREO</span>
-  <span>© 2024 Hesung 和生创新 · AIoT 软件创新部门</span>
+  <span>© 2025 Hesung 和生创新 · AIoT 软件创新部门</span>
   <a href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
 </footer>
 
