@@ -41,9 +41,60 @@
     border-bottom: 1px solid var(--gray-200);
   }
 
-  .nav-logo {
-    font-size: 20px; font-weight: 800; letter-spacing: 0.08em;
-    color: var(--black); text-decoration: none;
+  .nav-logo img { height: 28px; width: auto; display: block; }
+
+  /* ── Products ── */
+  .products { background: var(--black); padding: 80px 24px; overflow: hidden; }
+  .products .section-tag { color: #555; }
+  .products .section-title { color: var(--white); margin-bottom: 8px; }
+  .products .section-desc { color: #888; margin-bottom: 56px; }
+
+  .product-scroll-wrapper { position: relative; }
+  .product-scroll-wrapper::before,
+  .product-scroll-wrapper::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none;
+  }
+  .product-scroll-wrapper::before { left: 0; background: linear-gradient(to right, #0a0a0a, transparent); }
+  .product-scroll-wrapper::after  { right: 0; background: linear-gradient(to left, #0a0a0a, transparent); }
+
+  .product-track {
+    display: flex; gap: 16px;
+    animation: scroll-x 35s linear infinite;
+    width: max-content;
+  }
+  .product-track:hover { animation-play-state: paused; }
+
+  @keyframes scroll-x {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .product-card {
+    flex-shrink: 0;
+    width: 200px; height: 200px;
+    background: #111;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #1e1e1e;
+  }
+  .product-card img {
+    width: 100%; height: 100%;
+    object-fit: contain; padding: 16px;
+    transition: transform 0.4s ease;
+    filter: brightness(0.95);
+  }
+  .product-card:hover img { transform: scale(1.07); filter: brightness(1.05); }
+
+  .product-cats {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 32px; justify-content: center;
+  }
+  .product-cat {
+    font-size: 12px; color: #666;
+    border: 1px solid #222; border-radius: 100px;
+    padding: 6px 16px;
   }
 
   .nav-links { display: flex; gap: 32px; }
@@ -354,7 +405,9 @@
 
 <!-- Nav -->
 <nav>
-  <a class="nav-logo" href="#">DREO</a>
+  <a class="nav-logo" href="#">
+    <img src="https://www.dreo.com/cdn/shop/files/DREO_Logo_dee39d9c-bf28-42ac-ad99-8efc5a525501.png?v=1757931409&width=400" alt="DREO">
+  </a>
   <div class="nav-links">
     <a href="#why">为什么选择我们</a>
     <a href="#jobs">开放岗位</a>
@@ -391,6 +444,71 @@
       <div class="stat-num">50万+</div>
       <div class="stat-label">活跃 App 用户</div>
     </div>
+  </div>
+</section>
+
+<!-- Products -->
+<section class="products" id="products">
+  <div class="container">
+    <div class="section-tag">我们的产品</div>
+    <h2 class="section-title">从厨房到客厅，<br>用 AI 重塑每个家居场景</h2>
+    <p class="section-desc">DREO 覆盖智能厨电、空气舒适两大品类，在全球 11,000+ 零售门店销售，累计超 2500 万台。</p>
+  </div>
+  <div class="product-scroll-wrapper">
+    <div class="product-track" id="product-track">
+      <!-- 厨电 -->
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/C1_e4180f6b-67f2-4339-8d86-926383969822.png?v=1753340975&width=600" alt="ChefMaker"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/M1_2.png?v=1753343386&width=600" alt="BaristaMaker"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-KWF001.png?v=1753342200&width=600" alt="净水器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/20250214-181106_1.png?v=1753339439&width=600" alt="厨电"></div>
+      <!-- 风扇 -->
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HTF007S_1.png?v=1753342210&width=600" alt="塔扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HTF009S_2.png?v=1753342210&width=600" alt="塔扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HTF024S_Black_13b07e68-a63b-44c7-bfce-50f72d149b11.png?v=1776657178&width=600" alt="塔扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAF003S.png?v=1753341704&width=600" alt="循环扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAF004S.png?v=1753341703&width=600" alt="循环扇"></div>
+      <!-- 空调 -->
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAC005Spng_2.png?v=1753341707&width=600" alt="空调"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HEC005S_Grey_6be691f1-bd0b-47d5-8c86-388ed49e65fe.png?v=1776657021&width=600" alt="空调"></div>
+      <!-- 吊扇 -->
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HCF003S.png?v=1753341809&width=600" alt="吊扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HCF002S.png?v=1753341807&width=600" alt="吊扇"></div>
+      <!-- 加热器 -->
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HSH008.png?v=1762770377&width=600" alt="取暖器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HSH016.png?v=1753342079&width=600" alt="取暖器"></div>
+      <!-- 加湿器/净化器 -->
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HHM004S_c4988b4b-b223-4c69-a1f0-c3f9c1b6cf48.png?v=1753341807&width=600" alt="加湿器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HPF007S.png?v=1753931094&width=600" alt="空气净化器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAF001S.png?v=1753341705&width=600" alt="循环扇"></div>
+      <!-- 重复一遍实现无缝滚动 -->
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/C1_e4180f6b-67f2-4339-8d86-926383969822.png?v=1753340975&width=600" alt="ChefMaker"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/M1_2.png?v=1753343386&width=600" alt="BaristaMaker"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-KWF001.png?v=1753342200&width=600" alt="净水器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/20250214-181106_1.png?v=1753339439&width=600" alt="厨电"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HTF007S_1.png?v=1753342210&width=600" alt="塔扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HTF009S_2.png?v=1753342210&width=600" alt="塔扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HTF024S_Black_13b07e68-a63b-44c7-bfce-50f72d149b11.png?v=1776657178&width=600" alt="塔扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAF003S.png?v=1753341704&width=600" alt="循环扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAF004S.png?v=1753341703&width=600" alt="循环扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAC005Spng_2.png?v=1753341707&width=600" alt="空调"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HEC005S_Grey_6be691f1-bd0b-47d5-8c86-388ed49e65fe.png?v=1776657021&width=600" alt="空调"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HCF003S.png?v=1753341809&width=600" alt="吊扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HCF002S.png?v=1753341807&width=600" alt="吊扇"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HSH008.png?v=1762770377&width=600" alt="取暖器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HSH016.png?v=1753342079&width=600" alt="取暖器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HHM004S_c4988b4b-b223-4c69-a1f0-c3f9c1b6cf48.png?v=1753341807&width=600" alt="加湿器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HPF007S.png?v=1753931094&width=600" alt="空气净化器"></div>
+      <div class="product-card"><img src="https://www.dreo.com/cdn/shop/files/DR-HAF001S.png?v=1753341705&width=600" alt="循环扇"></div>
+    </div>
+  </div>
+  <div class="product-cats">
+    <span class="product-cat">🍳 智能厨电</span>
+    <span class="product-cat">❄️ 便携空调</span>
+    <span class="product-cat">🌬️ 智能风扇</span>
+    <span class="product-cat">🌡️ 取暖器</span>
+    <span class="product-cat">💧 加湿器</span>
+    <span class="product-cat">🌿 空气净化器</span>
+    <span class="product-cat">🔄 吊扇</span>
   </div>
 </section>
 
