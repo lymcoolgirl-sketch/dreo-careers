@@ -1186,123 +1186,95 @@
   document.getElementById('pmodal-close').addEventListener('click', closePModal);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePModal(); });
 
-  // ── Cosmic Orb Canvas ──
+  // ── Aurora Canvas ──
   (function(){
     const cvs = document.getElementById('orb-canvas');
     if(!cvs) return;
     const ctx = cvs.getContext('2d');
     let W, H;
-
     function resize(){ W=cvs.width=cvs.offsetWidth; H=cvs.height=cvs.offsetHeight; }
     resize();
     window.addEventListener('resize', resize);
 
-    // Generate ray burst — 340 rays fanning upward from focal point
-    const N = 340;
-    const RAYS = Array.from({length:N}, (_,i) => {
-      const spread = 210; // degrees of fan
-      const base = (165 + (spread/(N-1))*i) * Math.PI/180;
-      return {
-        base,
-        maxLen: 0.28 + Math.random()*0.68,
-        w: Math.pow(Math.random(),1.8)*2.8 + 0.08,
-        a: 0.12 + Math.random()*0.78,
-        ph: Math.random()*Math.PI*2,
-        fr: 0.18 + Math.random()*0.65,
-      };
-    });
+    // 7 flowing aurora curtain bands — each independently animated
+    const BANDS = [
+      { y:.10, amp:.14, f:.0058, s:.38, ph:0.00, th:.28, rgb:'0,230,255',   a:.85 },
+      { y:.24, amp:.17, f:.0044, s:.28, ph:2.10, th:.30, rgb:'0,140,255',   a:.80 },
+      { y:.40, amp:.13, f:.0062, s:.46, ph:1.30, th:.26, rgb:'20,200,250',  a:.78 },
+      { y:.55, amp:.15, f:.0050, s:.22, ph:3.70, th:.24, rgb:'60,90,255',   a:.72 },
+      { y:.68, amp:.10, f:.0075, s:.40, ph:5.20, th:.22, rgb:'0,245,210',   a:.70 },
+      { y:.80, amp:.08, f:.0038, s:.32, ph:4.50, th:.20, rgb:'90,70,255',   a:.62 },
+      { y:.02, amp:.06, f:.0088, s:.17, ph:6.10, th:.16, rgb:'0,200,255',   a:.55 },
+    ];
 
     let t = 0;
 
-    function draw(){
-      ctx.clearRect(0,0,W,H);
+    // Multi-harmonic wave for organic non-repeating look
+    function wy(b, x) {
+      return b.y * H
+        + Math.sin(x * b.f        + t * b.s       + b.ph)       * b.amp * H
+        + Math.sin(x * b.f * 1.83 + t * b.s * .62 + b.ph + .9)  * b.amp * .44 * H
+        + Math.sin(x * b.f * .49  + t * b.s * 1.4 + b.ph + 2.3) * b.amp * .22 * H;
+    }
 
-      // Focal point – lower-center
-      const cx = W*0.5, cy = H*0.72;
-      const R  = Math.min(W,H)*0.46;
+    function drawBand(b) {
+      const step = 5;
+      const pts = [];
+      for(let x = 0; x <= W; x += step) pts.push([x, wy(b, x)]);
 
-      // ── Layer 1: outer diffuse corona ──
-      const cog = ctx.createRadialGradient(cx, cy-R*0.32, 0, cx, cy-R*0.22, R*1.25);
-      cog.addColorStop(0,   'rgba(10,55,200,0.14)');
-      cog.addColorStop(0.30,'rgba(15,65,210,0.28)');
-      cog.addColorStop(0.60,'rgba(18,75,230,0.36)');
-      cog.addColorStop(0.85,'rgba(8,40,170,0.18)');
-      cog.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = cog; ctx.fillRect(0,0,W,H);
+      // Build filled ribbon: top edge → bottom edge (offset down by th*H)
+      ctx.beginPath();
+      pts.forEach(([x,y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+      for(let i = pts.length-1; i >= 0; i--) ctx.lineTo(pts[i][0], pts[i][1] + b.th * H);
+      ctx.closePath();
 
-      // ── Layer 2: dense inner corona ring ──
-      const mig = ctx.createRadialGradient(cx, cy-R*0.1, R*0.25, cx, cy-R*0.12, R*0.88);
-      mig.addColorStop(0,   'rgba(25,90,255,0.0)');
-      mig.addColorStop(0.35,'rgba(35,110,255,0.38)');
-      mig.addColorStop(0.65,'rgba(55,130,255,0.48)');
-      mig.addColorStop(0.88,'rgba(20,75,220,0.22)');
-      mig.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = mig; ctx.fillRect(0,0,W,H);
+      // Gradient: bright at leading (upper) edge, fading downward — aurora curtain feel
+      const my = wy(b, W * .5);
+      const gr = ctx.createLinearGradient(0, my - b.th*H*.12, 0, my + b.th*H*1.05);
+      gr.addColorStop(0,    `rgba(${b.rgb},0)`);
+      gr.addColorStop(.10,  `rgba(${b.rgb},${b.a})`);
+      gr.addColorStop(.32,  `rgba(${b.rgb},${b.a * .65})`);
+      gr.addColorStop(.65,  `rgba(${b.rgb},${b.a * .22})`);
+      gr.addColorStop(1,    `rgba(${b.rgb},0)`);
 
-      // ── Layer 3: ray burst (screen blend) ──
+      ctx.shadowBlur = 32;
+      ctx.shadowColor = `rgba(${b.rgb},.55)`;
+      ctx.fillStyle = gr;
+      ctx.fill();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Deep space background glow
+      const bg = ctx.createRadialGradient(W*.5, H*.42, 0, W*.5, H*.42, W*.72);
+      bg.addColorStop(0,  'rgba(4,14,52,0.75)');
+      bg.addColorStop(.5, 'rgba(2,8,28,0.45)');
+      bg.addColorStop(1,  'rgba(0,0,0,0)');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+      // Draw all aurora bands with screen blending
       ctx.save();
       ctx.globalCompositeOperation = 'screen';
-      RAYS.forEach(r => {
-        const pulse = 0.48 + 0.52*Math.sin(t*r.fr + r.ph);
-        const wobble = 0.012*Math.sin(t*0.18 + r.ph*2.1);
-        const angle = r.base + wobble;
-        const len = R * r.maxLen * (0.55 + 0.45*pulse);
-        const ex = cx + Math.cos(angle)*len;
-        const ey = cy + Math.sin(angle)*len;
-        const al = r.a * pulse;
+      BANDS.forEach(drawBand);
 
-        const g = ctx.createLinearGradient(cx,cy,ex,ey);
-        g.addColorStop(0,    `rgba(235,248,255,${Math.min(al*1.05,0.95)})`);
-        g.addColorStop(0.06, `rgba(140,210,255,${al*0.82})`);
-        g.addColorStop(0.28, `rgba(55,145,255,${al*0.48})`);
-        g.addColorStop(0.65, `rgba(18,85,230,${al*0.18})`);
-        g.addColorStop(1,    'rgba(0,25,150,0)');
-
-        ctx.save();
-        ctx.lineWidth = r.w;
-        if(r.w > 1.1){ ctx.shadowBlur=10; ctx.shadowColor=`rgba(70,155,255,${al*0.45})`; }
-        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ex,ey);
-        ctx.strokeStyle = g; ctx.stroke();
-        ctx.restore();
-      });
+      // Luminous convergence halo at center
+      const hx = W*.5, hy = H*.44;
+      const halo = ctx.createRadialGradient(hx, hy, 0, hx, hy, W*.38);
+      halo.addColorStop(0,   'rgba(160,235,255,.42)');
+      halo.addColorStop(.18, 'rgba(60,170,255,.20)');
+      halo.addColorStop(.50, 'rgba(20,100,230,.07)');
+      halo.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = halo; ctx.fillRect(0, 0, W, H);
       ctx.restore();
 
-      // ── Layer 4: bright center core ──
-      const cor = ctx.createRadialGradient(cx,cy,0, cx,cy, R*0.18);
-      cor.addColorStop(0,    'rgba(255,255,255,1)');
-      cor.addColorStop(0.04, 'rgba(230,245,255,0.96)');
-      cor.addColorStop(0.13, 'rgba(150,215,255,0.72)');
-      cor.addColorStop(0.30, 'rgba(75,150,255,0.36)');
-      cor.addColorStop(0.58, 'rgba(25,95,230,0.12)');
-      cor.addColorStop(1,    'rgba(0,0,0,0)');
-      ctx.fillStyle = cor; ctx.fillRect(0,0,W,H);
+      // Circular vignette mask — softens edges into the dark hero bg
+      const vig = ctx.createRadialGradient(W*.5, H*.5, W*.3, W*.5, H*.5, W*.72);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(1, 'rgba(6,8,16,0.72)');
+      ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
 
-      // ── Layer 5: gold arc (slowly orbits) ──
-      ctx.save();
-      const arcR  = R * 0.87;
-      const aOff  = t * 0.018;
-      const aS    = -Math.PI*0.82 + aOff;
-      const aE    = -Math.PI*0.06 + aOff;
-      const gArcX1 = cx+Math.cos(aS)*arcR, gArcY1 = cy+Math.sin(aS)*arcR;
-      const gArcX2 = cx+Math.cos(aE)*arcR, gArcY2 = cy+Math.sin(aE)*arcR;
-
-      [16, 9, 4, 1.4].forEach((lw, idx) => {
-        const br = 1 - idx*0.14;
-        const ag = ctx.createLinearGradient(gArcX1,gArcY1,gArcX2,gArcY2);
-        ag.addColorStop(0,    'rgba(255,200,65,0)');
-        ag.addColorStop(0.22, `rgba(255,218,95,${0.52*br})`);
-        ag.addColorStop(0.50, `rgba(255,255,215,${0.94*br})`);
-        ag.addColorStop(0.78, `rgba(255,210,75,${0.52*br})`);
-        ag.addColorStop(1,    'rgba(255,180,45,0)');
-
-        ctx.beginPath(); ctx.arc(cx,cy,arcR,aS,aE);
-        ctx.strokeStyle = ag; ctx.lineWidth = lw;
-        ctx.shadowBlur = lw*3.5; ctx.shadowColor='rgba(255,200,75,0.65)';
-        ctx.stroke();
-      });
-      ctx.restore();
-
-      t += 0.009;
+      t += 0.014;
       requestAnimationFrame(draw);
     }
     draw();
