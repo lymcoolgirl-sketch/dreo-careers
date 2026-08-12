@@ -1118,23 +1118,26 @@
     window.addEventListener('resize', resize);
 
     const WAVES = [
-      { r:0.12, amp:22, freq:0.0055, spd:0.55, color:'rgba(50,130,255,0.80)', lw:1.4 },
-      { r:0.26, amp:28, freq:0.0040, spd:0.42, color:'rgba(30,95,255,0.70)',  lw:1.1 },
-      { r:0.42, amp:20, freq:0.0068, spd:0.62, color:'rgba(70,158,255,0.75)', lw:1.6 },
-      { r:0.56, amp:26, freq:0.0050, spd:0.38, color:'rgba(20,78,230,0.65)',  lw:1.0 },
-      { r:0.70, amp:24, freq:0.0060, spd:0.52, color:'rgba(90,168,255,0.70)', lw:1.3 },
-      { r:0.84, amp:16, freq:0.0076, spd:0.68, color:'rgba(40,115,255,0.60)', lw:0.9 },
+      { r:0.72, amp:26, freq:0.0058, spd:0.50, lw:4.0, c1:'rgba(60,140,255,0)', c2:'rgba(80,160,255,0.85)', c3:'rgba(50,120,255,0)' },
+      { r:0.86, amp:18, freq:0.0072, spd:0.65, lw:3.0, c1:'rgba(30,100,255,0)', c2:'rgba(100,180,255,0.75)', c3:'rgba(30,100,255,0)' },
     ];
 
     let t = 0;
     function draw() {
       ctx.clearRect(0, 0, cvs.width, cvs.height);
       WAVES.forEach(w => {
+        const grad = ctx.createLinearGradient(0, 0, cvs.width, 0);
+        grad.addColorStop(0,    w.c1);
+        grad.addColorStop(0.15, w.c2);
+        grad.addColorStop(0.5,  w.c2);
+        grad.addColorStop(0.85, w.c2);
+        grad.addColorStop(1,    w.c3);
         const baseY = cvs.height * w.r;
         ctx.beginPath();
-        ctx.strokeStyle = w.color;
+        ctx.strokeStyle = grad;
         ctx.lineWidth = w.lw;
         ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
         for (let x = 0; x <= cvs.width; x += 4) {
           const y = baseY + Math.sin(x * w.freq + t * w.spd) * w.amp;
           x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
