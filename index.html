@@ -1121,8 +1121,12 @@
     window.addEventListener('resize', resize);
 
     const WAVES = [
-      { r:0.72, amp:26, freq:0.0058, spd:0.50, lw:4.0, c1:'rgba(60,140,255,0)', c2:'rgba(80,160,255,0.85)', c3:'rgba(50,120,255,0)' },
-      { r:0.86, amp:18, freq:0.0072, spd:0.65, lw:3.0, c1:'rgba(30,100,255,0)', c2:'rgba(100,180,255,0.75)', c3:'rgba(30,100,255,0)' },
+      { r:0.72, amp:30, freq:0.0050, spd:0.45,
+        lw:10, blur:45, glowColor:'rgba(60,140,255,1)',
+        core:'rgba(180,220,255,0.95)' },
+      { r:0.87, amp:22, freq:0.0065, spd:0.60,
+        lw:7,  blur:35, glowColor:'rgba(80,160,255,0.9)',
+        core:'rgba(160,210,255,0.90)' },
     ];
 
     let t = 0;
@@ -1130,24 +1134,28 @@
       ctx.clearRect(0, 0, cvs.width, cvs.height);
       WAVES.forEach(w => {
         const grad = ctx.createLinearGradient(0, 0, cvs.width, 0);
-        grad.addColorStop(0,    w.c1);
-        grad.addColorStop(0.15, w.c2);
-        grad.addColorStop(0.5,  w.c2);
-        grad.addColorStop(0.85, w.c2);
-        grad.addColorStop(1,    w.c3);
+        grad.addColorStop(0,    'rgba(80,150,255,0)');
+        grad.addColorStop(0.12, w.core);
+        grad.addColorStop(0.88, w.core);
+        grad.addColorStop(1,    'rgba(80,150,255,0)');
+
         const baseY = cvs.height * w.r;
-        ctx.beginPath();
+        ctx.save();
+        ctx.shadowBlur  = w.blur;
+        ctx.shadowColor = w.glowColor;
+        ctx.lineWidth   = w.lw;
+        ctx.lineJoin    = 'round';
+        ctx.lineCap     = 'round';
         ctx.strokeStyle = grad;
-        ctx.lineWidth = w.lw;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
+        ctx.beginPath();
         for (let x = 0; x <= cvs.width; x += 4) {
           const y = baseY + Math.sin(x * w.freq + t * w.spd) * w.amp;
           x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
         ctx.stroke();
+        ctx.restore();
       });
-      t += 0.03;
+      t += 0.025;
       requestAnimationFrame(draw);
     }
     draw();
