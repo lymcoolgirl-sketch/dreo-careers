@@ -503,6 +503,43 @@
     padding: 5px 14px;
   }
 
+  /* ── Nav CTA ── */
+  .nav-links a.nav-cta {
+    background: var(--black);
+    color: var(--white);
+    padding: 7px 20px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .nav-links a.nav-cta:hover { color: var(--white); opacity: 0.7; }
+
+  .nav-links a.active { color: var(--black); font-weight: 600; }
+
+  /* ── Hero Rings ── */
+  .hero-ring {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    top: 50%; left: 50%; transform: translate(-50%, -52%);
+    border: 1px solid rgba(255,255,255,0.06);
+    animation: ring-breathe 14s ease-in-out infinite;
+  }
+  @keyframes ring-breathe {
+    0%, 100% { opacity: 0.55; transform: translate(-50%, -52%) scale(1); }
+    50%       { opacity: 0.12; transform: translate(-50%, -52%) scale(1.05); }
+  }
+
+  /* ── Scroll Reveal ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.55s cubic-bezier(0.4,0,0.2,1),
+                transform 0.55s cubic-bezier(0.4,0,0.2,1);
+  }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+  /* ── Arrow nudge ── */
+  .hero-cta svg, .apply-btn svg, .apply-main-btn svg { transition: transform 0.2s; }
+  .hero-cta:hover svg, .apply-btn:hover svg, .apply-main-btn:hover svg { transform: translateX(3px); }
+
   /* ── Responsive ── */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -513,6 +550,8 @@
     .hero-stats { gap: 32px; }
     .apply-box { padding: 36px 24px; }
     footer { padding: 32px 20px; flex-direction: column; align-items: flex-start; }
+    .ach-item { border-right: none; border-bottom: 1px solid #1e1e1e; padding: 20px 16px; flex: 1 1 45%; }
+    .ach-item:last-child { border-bottom: none; }
   }
 </style>
 </head>
@@ -527,12 +566,15 @@
     <a href="#why">为什么选择我们</a>
     <a href="#jobs">开放岗位</a>
     <a href="#process">招聘流程</a>
-    <a href="#apply">立即投递</a>
+    <a class="nav-cta" href="#apply">立即投递</a>
   </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
+  <div class="hero-ring" style="width:480px;height:480px"></div>
+  <div class="hero-ring" style="width:760px;height:760px;animation-delay:-5s"></div>
+  <div class="hero-ring" style="width:1050px;height:1050px;animation-delay:-10s"></div>
   <div class="hero-content">
     <div class="hero-tag">Hesung 和生创新 · AIoT 软件创新部门</div>
     <h1>用 AI 重新定义<br><span>智能家居体验</span></h1>
@@ -904,7 +946,10 @@
 <footer>
   <span class="footer-logo">DREO</span>
   <span>© 2025 Hesung 和生创新 · AIoT 软件创新部门</span>
-  <a href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
+  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+    <a href="https://www.dreo.com" target="_blank" rel="noopener">dreo.com</a>
+    <a href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
+  </div>
 </footer>
 
 <!-- Product Modal -->
@@ -1051,6 +1096,42 @@
   });
   document.getElementById('pmodal-close').addEventListener('click', closePModal);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePModal(); });
+
+  // ── Scroll reveal ──
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+
+  [
+    ['.why-card',     0.08],
+    ['.process-step', 0.10],
+    ['.ach-item',     0.07],
+    ['.job-card',     0.10],
+  ].forEach(([sel, d]) => {
+    document.querySelectorAll(sel).forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = `${(i * d).toFixed(2)}s`;
+      revealObs.observe(el);
+    });
+  });
+
+  // ── Nav active section ──
+  const navAs = document.querySelectorAll('.nav-links a[href^="#"]');
+  const secObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navAs.forEach(a => a.classList.remove('active'));
+        const lnk = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+        if (lnk) lnk.classList.add('active');
+      }
+    });
+  }, { threshold: 0.45 });
+  ['why','jobs','process','apply'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) secObs.observe(el);
+  });
 </script>
 </body>
 </html>
