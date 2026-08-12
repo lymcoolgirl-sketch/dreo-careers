@@ -99,12 +99,13 @@
     padding: 6px 16px;
   }
 
-  .nav-links { display: flex; gap: 32px; }
+  .nav-links { display: flex; gap: 4px; position: relative; align-items: center; }
   .nav-links a {
     font-size: 14px; color: var(--gray-600); text-decoration: none;
     transition: color 0.2s;
+    padding: 7px 18px; position: relative; z-index: 1;
   }
-  .nav-links a:hover { color: var(--black); }
+  .nav-links a:hover { color: var(--gray-800); }
 
   /* ── Hero ── */
   .hero {
@@ -509,17 +510,18 @@
     width: 100%; height: 100%; pointer-events: none;
   }
 
-  /* ── Nav CTA ── */
-  .nav-links a.nav-cta {
-    background: var(--black);
-    color: var(--white);
-    padding: 7px 20px;
-    border-radius: 100px;
-    font-weight: 600;
-  }
-  .nav-links a.nav-cta:hover { color: var(--white); opacity: 0.7; }
+  /* ── Nav Sliding Pill ── */
+  .nav-links a.nav-cta { font-weight: 600; }
+  .nav-links a.active  { color: var(--white); }
 
-  .nav-links a.active { color: var(--black); font-weight: 600; }
+  .nav-pill {
+    position: absolute; z-index: 0; pointer-events: none;
+    top: 50%; transform: translateY(-50%);
+    height: 34px; background: var(--black); border-radius: 100px;
+    transition: left 0.38s cubic-bezier(0.4,0,0.2,1),
+                width 0.38s cubic-bezier(0.4,0,0.2,1);
+    left: 0; width: 0;
+  }
 
   /* ── Hero Rings ── */
   .hero-ring {
@@ -569,6 +571,7 @@
     <img src="https://www.dreo.com/cdn/shop/files/DREO_Logo_dee39d9c-bf28-42ac-ad99-8efc5a525501.png?v=1757931409&width=400" alt="DREO">
   </a>
   <div class="nav-links">
+    <span id="nav-pill" class="nav-pill"></span>
     <a href="#why">为什么选择我们</a>
     <a href="#jobs">开放岗位</a>
     <a href="#process">招聘流程</a>
@@ -1170,14 +1173,51 @@
     });
   });
 
-  // ── Nav active section ──
-  const navAs = document.querySelectorAll('.nav-links a[href^="#"]');
+  // ── Nav sliding pill ──
+  const navAs   = document.querySelectorAll('.nav-links a[href^="#"]');
+  const ctaLink = document.querySelector('.nav-links a.nav-cta');
+
+  function movePill(link) {
+    const pill = document.getElementById('nav-pill');
+    if (!pill || !link) return;
+    const cr = link.closest('.nav-links').getBoundingClientRect();
+    const lr = link.getBoundingClientRect();
+    pill.style.left  = (lr.left - cr.left) + 'px';
+    pill.style.width = lr.width + 'px';
+  }
+
+  function setActive(link) {
+    navAs.forEach(a => a.classList.remove('active'));
+    if (link) { link.classList.add('active'); movePill(link); }
+  }
+
+  // Init: pill on CTA, no animation flash
+  window.addEventListener('load', () => {
+    const pill = document.getElementById('nav-pill');
+    if (pill) { pill.style.transition = 'none'; }
+    if (ctaLink) ctaLink.classList.add('active');
+    movePill(ctaLink);
+    requestAnimationFrame(() => {
+      if (pill) pill.style.transition = '';
+    });
+  });
+
+  // Back to top → reset to CTA
+  window.addEventListener('scroll', () => {
+    if (window.scrollY < 100) setActive(ctaLink);
+  }, { passive: true });
+
+  // Resize → reposition
+  window.addEventListener('resize', () => {
+    const active = document.querySelector('.nav-links a.active') || ctaLink;
+    movePill(active);
+  });
+
   const secObs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        navAs.forEach(a => a.classList.remove('active'));
         const lnk = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
-        if (lnk) lnk.classList.add('active');
+        setActive(lnk || ctaLink);
       }
     });
   }, { threshold: 0.45 });
