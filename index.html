@@ -78,6 +78,8 @@
     overflow: hidden;
     display: flex; align-items: center; justify-content: center;
     border: 1px solid #1e1e1e;
+    cursor: pointer;
+    position: relative;
   }
   .product-card img {
     width: 100%; height: 100%;
@@ -387,6 +389,81 @@
   footer a { color: #666; text-decoration: none; }
   footer a:hover { color: #aaa; }
   .footer-logo { font-size: 16px; font-weight: 800; color: var(--white); letter-spacing: 0.08em; }
+
+  /* ── Product Modal ── */
+  .pmodal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.82); backdrop-filter: blur(10px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .pmodal-overlay.open { display: flex; }
+
+  .pmodal-box {
+    background: var(--white); border-radius: 20px; overflow: hidden;
+    max-width: 860px; width: 100%; max-height: 90vh; overflow-y: auto;
+    position: relative; animation: pmodal-in 0.22s ease;
+  }
+  @keyframes pmodal-in {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .pmodal-close {
+    position: absolute; top: 16px; right: 16px; z-index: 10;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--gray-200); background: var(--white);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .pmodal-close:hover { background: var(--gray-100); }
+
+  .pmodal-inner { display: grid; grid-template-columns: 1fr 1fr; }
+
+  .pmodal-img-wrap {
+    background: #f2f2f2;
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px; min-height: 340px;
+  }
+  .pmodal-img-wrap img {
+    max-width: 100%; max-height: 280px; object-fit: contain;
+  }
+
+  .pmodal-info {
+    padding: 48px 40px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .pmodal-cat {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .pmodal-name {
+    font-size: 26px; font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1.2;
+  }
+  .pmodal-desc {
+    font-size: 14px; color: var(--gray-600); line-height: 1.8;
+  }
+  .pmodal-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pmodal-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+    padding: 5px 12px; border-radius: 6px;
+    background: var(--black); color: var(--white);
+  }
+  .pmodal-stats {
+    border-top: 1px solid var(--gray-200);
+    padding-top: 14px; margin-top: 4px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .pmodal-stat-item {
+    font-size: 13px; color: var(--gray-600); font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .pmodal-inner { grid-template-columns: 1fr; }
+    .pmodal-img-wrap { min-height: 220px; padding: 32px; }
+    .pmodal-info { padding: 28px 24px; }
+    .pmodal-name { font-size: 22px; }
+  }
 
   /* ── Achievements Strip ── */
   .achievements {
@@ -830,22 +907,150 @@
   <a href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
 </footer>
 
+<!-- Product Modal -->
+<div id="pmodal" class="pmodal-overlay">
+  <div class="pmodal-box">
+    <button class="pmodal-close" id="pmodal-close">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmodal-inner">
+      <div class="pmodal-img-wrap">
+        <img id="pmodal-img" src="" alt="">
+      </div>
+      <div class="pmodal-info">
+        <div id="pmodal-cat" class="pmodal-cat"></div>
+        <h2 id="pmodal-name" class="pmodal-name"></h2>
+        <p id="pmodal-desc" class="pmodal-desc"></p>
+        <div id="pmodal-badges" class="pmodal-badges"></div>
+        <div id="pmodal-stats" class="pmodal-stats"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+  // ── Job accordion ──
   function toggleJob(header) {
     const card = header.closest('.job-card');
     const body = card.querySelector('.job-body');
     const btn  = card.querySelector('.job-toggle-btn');
     const isOpen = body.classList.contains('open');
-    // close all
     document.querySelectorAll('.job-body').forEach(b => b.classList.remove('open'));
     document.querySelectorAll('.job-toggle-btn').forEach(b => b.classList.remove('open'));
-    // open clicked if it was closed
     if (!isOpen) {
       body.classList.add('open');
       btn.classList.add('open');
       setTimeout(() => header.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
     }
   }
+
+  // ── Product data (matches card order in track) ──
+  const PRODUCTS = [
+    { name: 'ChefMaker', cat: '智能厨电',
+      img: 'https://www.dreo.com/cdn/shop/files/C1_e4180f6b-67f2-4339-8d86-926383969822.png?v=1753340975&width=600',
+      desc: '首款搭载 AI 烹饪引擎的智能料理机，Chef Mode 全程自动感温控火，CombiCook 技术支持多达 6 种烹饪方式同步进行，真正实现免看管烹饪。',
+      badges: ['CES Innovation Award', 'iF Design Award 2023', 'Kickstarter 2023 厨电众筹冠军'], stats: [] },
+    { name: 'BaristaMaker', cat: '智能咖啡器具',
+      img: 'https://www.dreo.com/cdn/shop/files/M1_2.png?v=1753343386&width=600',
+      desc: '专业级家用咖啡伴侣，内置专利奶泡技术，将咖啡馆级别的奶泡体验带入每个家庭，三大咖啡世界冠军联合代言。',
+      badges: ['Kickstarter 2024 奶泡机众筹冠军'], stats: [] },
+    { name: '净水器 KWF001', cat: '厨房净水',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-KWF001.png?v=1753342200&width=600',
+      desc: 'DREO 智能净水系统，多级净化技术结合实时水质监测，为家庭每滴饮用水提供安全保障。',
+      badges: [], stats: [] },
+    { name: '智能厨电', cat: '厨房电器',
+      img: 'https://www.dreo.com/cdn/shop/files/20250214-181106_1.png?v=1753339439&width=600',
+      desc: 'DREO 多功能智能厨电，将 AI 感知与家电体验深度融合，覆盖烹、煮、蒸、烤全场景厨房需求。',
+      badges: [], stats: [] },
+    { name: '塔扇 HTF007S', cat: '智能风扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HTF007S_1.png?v=1753342210&width=600',
+      desc: '全美销量领先的智能塔扇，DC 直流永磁电机超静音运行，12 档精细调节，支持 App 智能控制与定时功能。',
+      badges: ['4.6 ★ 全美 No.1 评分', '45% 市占连续3年第一'], stats: ['累计销售 385 万台'] },
+    { name: '塔扇 HTF009S', cat: '智能风扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HTF009S_2.png?v=1753342210&width=600',
+      desc: 'DREO 大风量智能塔扇，110° 大角度摆头，强劲送风覆盖整个房间，夜间安静模式降至 25 dB。',
+      badges: ['4.6 ★ 全美 No.1 评分'], stats: ['美国塔扇市占第一'] },
+    { name: '塔扇 HTF024S', cat: '智能风扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HTF024S_Black_13b07e68-a63b-44c7-bfce-50f72d149b11.png?v=1776657178&width=600',
+      desc: 'DREO 旗舰塔扇，超薄时尚机身，负离子空气净化，6 段风速 App 智能联动，全面兼容智能家居生态。',
+      badges: ['4.6 ★ 全美 No.1 评分'], stats: ['美国塔扇市占 45%'] },
+    { name: '循环扇 HAF003S', cat: '空气循环扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HAF003S.png?v=1753341704&width=600',
+      desc: '专业 3D 空气循环扇，360° 全向摆头，8 档风速，将房间空气高效混合循环，大幅缩短冷暖气扩散时间。',
+      badges: ['4.7 ★ 全美 No.1 评分', '22% 市占第一'], stats: ['累计销售 48 万台'] },
+    { name: '循环扇 HAF004S', cat: '空气循环扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HAF004S.png?v=1753341703&width=600',
+      desc: 'DREO 大风量循环扇，DC 变频电机超低噪音，适合大面积客厅与卧室，App 智能联动全屋空气管理。',
+      badges: ['4.7 ★ 全美 No.1 评分'], stats: [] },
+    { name: '便携空调 HAC005S', cat: '便携空调',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HAC005Spng_2.png?v=1753341707&width=600',
+      desc: '颠覆传统移动空调的三大专利：免排水技术无需手动倒水、静音压缩机低噪运行、静音风道减少共振，真正的安静制冷。',
+      badges: ['4.4 ★ 全美 No.1 评分', '免排水专利技术'], stats: ['2025 年销售额突破 $1,800 万'] },
+    { name: '便携空调 HEC005S', cat: '便携空调',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HEC005S_Grey_6be691f1-bd0b-47d5-8c86-388ed49e65fe.png?v=1776657021&width=600',
+      desc: 'DREO 一体式便携空调，快速制冷，安装简便，无需外机，适合公寓与租房用户，开箱即用。',
+      badges: ['4.4 ★ 全美 No.1 评分'], stats: [] },
+    { name: '吊扇 HCF003S', cat: '智能吊扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HCF003S.png?v=1753341809&width=600',
+      desc: 'DREO 静音吊扇，DC 变频无刷电机比传统交流电机节能 60%，App 智能控制，无极变速悄然如风。',
+      badges: [], stats: [] },
+    { name: '吊扇 HCF002S', cat: '智能吊扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HCF002S.png?v=1753341807&width=600',
+      desc: 'DREO 现代极简吊扇，流线型叶片设计，低噪音运行，支持 Alexa、Google Home 语音控制。',
+      badges: [], stats: [] },
+    { name: '取暖器 HSH008', cat: '智能取暖器',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HSH008.png?v=1762770377&width=600',
+      desc: 'DREO 智能 PTC 陶瓷取暖器，1500W 急速加热，恒温节能，防倾倒自动断电，安全陪伴整个冬季。',
+      badges: ['4.5 ★ 全美 No.1 评分', '33% 市占连续2年第一'], stats: ['累计销售 417 万台'] },
+    { name: '取暖器 HSH016', cat: '智能取暖器',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HSH016.png?v=1753342079&width=600',
+      desc: 'DREO 旗舰油汀取暖器，超宽幅热辐射，静默运行，整夜供暖不干燥，全室均匀升温。',
+      badges: ['4.5 ★ 全美 No.1 评分'], stats: [] },
+    { name: '加湿器 HHM004S', cat: '智能加湿器',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HHM004S_c4988b4b-b223-4c69-a1f0-c3f9c1b6cf48.png?v=1753341807&width=600',
+      desc: 'DREO 超声波加湿器，超大容量水箱，App 精准调节湿度，冷热双雾模式，安静运行呵护睡眠。',
+      badges: ['4.5 ★ 全美 No.2 评分', '19% 市占第一'], stats: ['累计销售 127 万台'] },
+    { name: '空气净化器 HPF007S', cat: '空气净化器',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HPF007S.png?v=1753931094&width=600',
+      desc: 'DREO 三合一空气净化器，真 HEPA H13 滤芯过滤 99.97% 微粒，活性碳去除异味，实时 AQI 监测。',
+      badges: [], stats: [] },
+    { name: '循环扇 HAF001S', cat: '空气循环扇',
+      img: 'https://www.dreo.com/cdn/shop/files/DR-HAF001S.png?v=1753341705&width=600',
+      desc: 'DREO 紧凑型循环扇，轻巧便携，强劲气流，4 档风速调节，适合卧室、书房等小空间高效换气。',
+      badges: ['4.7 ★ 全美 No.1 评分'], stats: [] },
+  ];
+
+  // Bind click handlers to all product cards
+  document.querySelectorAll('.product-card').forEach((card, i) => {
+    const p = PRODUCTS[i % PRODUCTS.length];
+    card.addEventListener('click', () => openProduct(p));
+  });
+
+  // ── Product Modal ──
+  function openProduct(p) {
+    document.getElementById('pmodal-img').src = p.img;
+    document.getElementById('pmodal-img').alt = p.name;
+    document.getElementById('pmodal-cat').textContent = p.cat;
+    document.getElementById('pmodal-name').textContent = p.name;
+    document.getElementById('pmodal-desc').textContent = p.desc;
+    document.getElementById('pmodal-badges').innerHTML =
+      p.badges.map(b => `<span class="pmodal-badge">${b}</span>`).join('');
+    const statsEl = document.getElementById('pmodal-stats');
+    statsEl.innerHTML = p.stats.map(s => `<div class="pmodal-stat-item">· ${s}</div>`).join('');
+    statsEl.style.display = p.stats.length ? 'flex' : 'none';
+    document.getElementById('pmodal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePModal() {
+    document.getElementById('pmodal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('pmodal').addEventListener('click', e => {
+    if (e.target.id === 'pmodal') closePModal();
+  });
+  document.getElementById('pmodal-close').addEventListener('click', closePModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePModal(); });
 </script>
 </body>
 </html>
