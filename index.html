@@ -116,10 +116,11 @@
   /* ── Hero ── */
   .hero {
     min-height: 100vh;
-    background: #060810;
+    background: var(--black);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    padding: 100px 60px 60px;
+    text-align: center;
+    padding: 120px 24px 80px;
     position: relative; overflow: hidden;
   }
 
@@ -127,34 +128,12 @@
     content: '';
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 70% 80% at 15% 55%, #060e24 0%, transparent 55%),
-      #060810;
-    pointer-events: none;
+      radial-gradient(ellipse 90% 65% at 25% 55%, #0b1a38 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 35%, #0a0e22 0%, transparent 55%),
+      #090909;
   }
 
-  /* Split layout */
-  .hero-split {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 1280px;
-    position: relative; z-index: 1;
-    gap: 24px;
-  }
-
-  .hero-left { flex: 1; min-width: 0; }
-
-  .hero-right {
-    flex: 0 0 520px;
-    height: 520px;
-    position: relative;
-    pointer-events: none;
-  }
-
-  #orb-canvas {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%; pointer-events: none;
-  }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; }
 
   .hero-tag {
     display: inline-block;
@@ -180,8 +159,8 @@
   }
 
   .hero p {
-    font-size: 16px; color: rgba(255,255,255,0.55); line-height: 1.85;
-    max-width: 520px; margin: 0 0 44px;
+    font-size: 16px; color: #aaa; line-height: 2;
+    max-width: 680px; margin: 0 auto 48px;
   }
 
   .hero-cta {
@@ -196,15 +175,12 @@
 
   .hero-stats {
     position: relative; z-index: 1;
-    display: flex; gap: 48px; margin-top: 56px;
-    flex-wrap: wrap; justify-content: flex-start;
-    width: 100%; max-width: 1280px;
-    padding-top: 40px;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; gap: 48px; margin-top: 80px;
+    flex-wrap: wrap; justify-content: center;
   }
-  .stat { text-align: left; }
+  .stat { text-align: center; }
   .stat-num { font-size: 28px; font-weight: 800; color: var(--white); }
-  .stat-label { font-size: 12px; color: rgba(255,255,255,0.38); margin-top: 4px; letter-spacing: 0.05em; }
+  .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; letter-spacing: 0.05em; }
 
   /* ── Section ── */
   section { padding: 100px 24px; }
@@ -587,7 +563,11 @@
   }
   .media-chip:hover { color: rgba(255,255,255,0.65); border-color: rgba(255,255,255,0.16); }
 
-  /* orb-canvas is defined in hero section above */
+  /* ── Wave Canvas ── */
+  #wave-canvas {
+    position: absolute; inset: 0; z-index: 0;
+    width: 100%; height: 100%; pointer-events: none;
+  }
 
   /* ── Nav Sliding Pill ── */
   .nav-links a.nav-cta { font-weight: 600; }
@@ -602,7 +582,17 @@
     left: 0; width: 0;
   }
 
-  /* hero rings removed – orb canvas handles hero visuals */
+  /* ── Hero Rings ── */
+  .hero-ring {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    top: 50%; left: 50%; transform: translate(-50%, -52%);
+    border: 1px solid rgba(255,255,255,0.06);
+    animation: ring-breathe 14s ease-in-out infinite;
+  }
+  @keyframes ring-breathe {
+    0%, 100% { opacity: 0.55; transform: translate(-50%, -52%) scale(1); }
+    50%       { opacity: 0.12; transform: translate(-50%, -52%) scale(1.05); }
+  }
 
   /* ── Scroll Reveal ── */
   .reveal {
@@ -618,22 +608,13 @@
   .hero-cta:hover svg, .apply-btn:hover svg, .apply-main-btn:hover svg { transform: translateX(3px); }
 
   /* ── Responsive ── */
-  @media (max-width: 960px) {
-    .hero { padding: 100px 32px 56px; }
-    .hero-split { flex-direction: column; gap: 40px; }
-    .hero-right { flex: 0 0 340px; height: 340px; width: 340px; }
-    .hero-stats { justify-content: center; }
-    .stat { text-align: center; }
-  }
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
     .nav-links { display: none; }
     section { padding: 72px 20px; }
     .job-card-header { padding: 20px; }
     .job-body { padding: 0 20px 24px; }
-    .hero { padding: 88px 24px 48px; }
-    .hero-stats { gap: 28px; }
-    .hero-right { flex: 0 0 280px; height: 280px; width: 280px; }
+    .hero-stats { gap: 32px; }
     .apply-box { padding: 36px 24px; }
     footer { padding: 32px 20px; flex-direction: column; align-items: flex-start; }
     .ach-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 20px 16px; flex: 1 1 45%; }
@@ -659,19 +640,18 @@
 
 <!-- Hero -->
 <section class="hero">
-  <div class="hero-split">
-    <div class="hero-left">
-      <div class="hero-tag">Hesung 和生创新 · AIoT 软件创新部门</div>
-      <h1>用 AI 重新定义<br><span>智能家居体验</span></h1>
-      <p>DREO，在北美智能家电品类市场连续领跑，正在构建下一代 AI 驱动的产品体验。我们需要的，是愿意把 AI 能力真正变成用户价值的产品人。</p>
-      <a class="hero-cta" href="#jobs">
-        查看开放岗位
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
-    <div class="hero-right">
-      <canvas id="orb-canvas"></canvas>
-    </div>
+  <div class="hero-ring" style="width:480px;height:480px"></div>
+  <div class="hero-ring" style="width:760px;height:760px;animation-delay:-5s"></div>
+  <div class="hero-ring" style="width:1050px;height:1050px;animation-delay:-10s"></div>
+  <canvas id="wave-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">Hesung 和生创新 · AIoT 软件创新部门</div>
+    <h1>用 AI 重新定义<br><span>智能家居体验</span></h1>
+    <p>DREO，在北美智能家电品类市场连续领跑，正在构建下一代 AI 驱动的产品体验。<br>我们需要的，是愿意把 AI 能力真正变成用户价值的产品人。</p>
+    <a class="hero-cta" href="#jobs">
+      查看开放岗位
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
   </div>
   <div class="hero-stats">
     <div class="stat">
@@ -1186,95 +1166,102 @@
   document.getElementById('pmodal-close').addEventListener('click', closePModal);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePModal(); });
 
-  // ── Aurora Canvas ──
+  // ── Particle / Aurora / Streak Canvas ──
   (function(){
-    const cvs = document.getElementById('orb-canvas');
+    const cvs = document.getElementById('wave-canvas');
     if(!cvs) return;
     const ctx = cvs.getContext('2d');
     let W, H;
-    function resize(){ W=cvs.width=cvs.offsetWidth; H=cvs.height=cvs.offsetHeight; }
-    resize();
-    window.addEventListener('resize', resize);
+    const PS=[], SS=[], PC=90, SC=8;
 
-    // 7 flowing aurora curtain bands — each independently animated
-    const BANDS = [
-      { y:.10, amp:.14, f:.0058, s:.38, ph:0.00, th:.28, rgb:'0,230,255',   a:.85 },
-      { y:.24, amp:.17, f:.0044, s:.28, ph:2.10, th:.30, rgb:'0,140,255',   a:.80 },
-      { y:.40, amp:.13, f:.0062, s:.46, ph:1.30, th:.26, rgb:'20,200,250',  a:.78 },
-      { y:.55, amp:.15, f:.0050, s:.22, ph:3.70, th:.24, rgb:'60,90,255',   a:.72 },
-      { y:.68, amp:.10, f:.0075, s:.40, ph:5.20, th:.22, rgb:'0,245,210',   a:.70 },
-      { y:.80, amp:.08, f:.0038, s:.32, ph:4.50, th:.20, rgb:'90,70,255',   a:.62 },
-      { y:.02, amp:.06, f:.0088, s:.17, ph:6.10, th:.16, rgb:'0,200,255',   a:.55 },
+    function rnd(a,b){ return a+Math.random()*(b-a); }
+
+    function resetP(p){
+      p.x=rnd(0,W); p.y=H+rnd(0,20);
+      p.vx=rnd(-0.22,0.22); p.vy=-(rnd(0.12,0.60));
+      p.r=rnd(1.0,3.2); p.maxA=rnd(0.55,0.90);
+      p.hue=rnd(200,258); p.life=0; p.ml=rnd(180,380);
+    }
+
+    function resetS(s){
+      const left=Math.random()>.5;
+      s.x=left?-180:W+180; s.y=rnd(H*.05,H*.88);
+      s.vx=left?rnd(1.5,3.5):-rnd(1.5,3.5); s.vy=rnd(-.28,.28);
+      s.len=rnd(140,320); s.lw=rnd(1.2,3.5);
+      s.maxA=rnd(0.50,0.85); s.hue=rnd(195,255);
+      s.life=0; s.ml=rnd(150,300); s.delay=Math.floor(rnd(0,160));
+    }
+
+    function resize(){
+      W=cvs.width=cvs.offsetWidth; H=cvs.height=cvs.offsetHeight;
+      PS.length=0;
+      for(let i=0;i<PC;i++){
+        const p={}; resetP(p);
+        p.y=rnd(0,H); p.life=Math.floor(rnd(0,p.ml)); PS.push(p);
+      }
+      SS.length=0;
+      for(let i=0;i<SC;i++){ const s={}; resetS(s); SS.push(s); }
+    }
+    resize();
+    window.addEventListener('resize',resize);
+
+    const AU=[
+      {bx:.22,by:.50,rgb:'20,100,255', R:.55,sp:.000068},
+      {bx:.74,by:.38,rgb:'90,20,230',  R:.48,sp:.000105},
+      {bx:.50,by:.74,rgb:'0,170,255',  R:.42,sp:.000082},
+      {bx:.10,by:.30,rgb:'40,60,220',  R:.38,sp:.000090},
     ];
 
-    let t = 0;
+    let fr=0;
+    function draw(){
+      ctx.clearRect(0,0,W,H);
 
-    // Multi-harmonic wave for organic non-repeating look
-    function wy(b, x) {
-      return b.y * H
-        + Math.sin(x * b.f        + t * b.s       + b.ph)       * b.amp * H
-        + Math.sin(x * b.f * 1.83 + t * b.s * .62 + b.ph + .9)  * b.amp * .44 * H
-        + Math.sin(x * b.f * .49  + t * b.s * 1.4 + b.ph + 2.3) * b.amp * .22 * H;
-    }
+      // ① Aurora glows
+      AU.forEach((a,i)=>{
+        const ox=Math.sin(fr*a.sp*1+i*2.3)*W*.10;
+        const oy=Math.cos(fr*a.sp*.8+i*1.7)*H*.07;
+        const cx=a.bx*W+ox, cy=a.by*H+oy, rad=a.R*Math.min(W,H);
+        const p=.13+.06*Math.sin(fr*.009+i*2.1);
+        const g=ctx.createRadialGradient(cx,cy,0,cx,cy,rad);
+        g.addColorStop(0,`rgba(${a.rgb},${p})`);
+        g.addColorStop(.45,`rgba(${a.rgb},${p*.5})`);
+        g.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+      });
 
-    function drawBand(b) {
-      const step = 5;
-      const pts = [];
-      for(let x = 0; x <= W; x += step) pts.push([x, wy(b, x)]);
+      // ② Floating particles
+      PS.forEach(p=>{
+        p.life++; p.x+=p.vx+Math.sin(fr*.018+p.x*.004)*.09; p.y+=p.vy;
+        if(p.life>=p.ml||p.y<-15){ resetP(p); return; }
+        const pg=p.life/p.ml;
+        const a=pg<.18?(pg/.18)*p.maxA:pg>.72?((1-pg)/.28)*p.maxA:p.maxA;
+        const pr=p.r*(1+.28*Math.sin(fr*.048+p.x*.09));
+        ctx.save();
+        ctx.shadowBlur=pr*14; ctx.shadowColor=`hsla(${p.hue},100%,80%,${a})`;
+        ctx.beginPath(); ctx.arc(p.x,p.y,pr,0,6.283);
+        ctx.fillStyle=`hsla(${p.hue},88%,76%,${a})`; ctx.fill();
+        ctx.restore();
+      });
 
-      // Build filled ribbon: top edge → bottom edge (offset down by th*H)
-      ctx.beginPath();
-      pts.forEach(([x,y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-      for(let i = pts.length-1; i >= 0; i--) ctx.lineTo(pts[i][0], pts[i][1] + b.th * H);
-      ctx.closePath();
+      // ③ Light streaks
+      SS.forEach(s=>{
+        if(s.delay>0){ s.delay--; return; }
+        s.life++; s.x+=s.vx; s.y+=s.vy;
+        if(s.life>=s.ml||s.x<-380||s.x>W+380){ resetS(s); return; }
+        const pg=s.life/s.ml;
+        const a=pg<.15?(pg/.15)*s.maxA:pg>.65?((1-pg)/.35)*s.maxA:s.maxA;
+        const tx=s.x-Math.sign(s.vx)*s.len;
+        const g=ctx.createLinearGradient(tx,s.y,s.x,s.y);
+        g.addColorStop(0,'rgba(0,0,0,0)');
+        g.addColorStop(1,`hsla(${s.hue},100%,75%,${a})`);
+        ctx.save();
+        ctx.shadowBlur=18; ctx.shadowColor=`hsla(${s.hue},100%,88%,${a*.9})`;
+        ctx.beginPath(); ctx.moveTo(tx,s.y); ctx.lineTo(s.x,s.y);
+        ctx.strokeStyle=g; ctx.lineWidth=s.lw; ctx.stroke();
+        ctx.restore();
+      });
 
-      // Gradient: bright at leading (upper) edge, fading downward — aurora curtain feel
-      const my = wy(b, W * .5);
-      const gr = ctx.createLinearGradient(0, my - b.th*H*.12, 0, my + b.th*H*1.05);
-      gr.addColorStop(0,    `rgba(${b.rgb},0)`);
-      gr.addColorStop(.10,  `rgba(${b.rgb},${b.a})`);
-      gr.addColorStop(.32,  `rgba(${b.rgb},${b.a * .65})`);
-      gr.addColorStop(.65,  `rgba(${b.rgb},${b.a * .22})`);
-      gr.addColorStop(1,    `rgba(${b.rgb},0)`);
-
-      ctx.shadowBlur = 32;
-      ctx.shadowColor = `rgba(${b.rgb},.55)`;
-      ctx.fillStyle = gr;
-      ctx.fill();
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, W, H);
-
-      // Deep space background glow
-      const bg = ctx.createRadialGradient(W*.5, H*.42, 0, W*.5, H*.42, W*.72);
-      bg.addColorStop(0,  'rgba(4,14,52,0.75)');
-      bg.addColorStop(.5, 'rgba(2,8,28,0.45)');
-      bg.addColorStop(1,  'rgba(0,0,0,0)');
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-
-      // Draw all aurora bands with screen blending
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-      BANDS.forEach(drawBand);
-
-      // Luminous convergence halo at center
-      const hx = W*.5, hy = H*.44;
-      const halo = ctx.createRadialGradient(hx, hy, 0, hx, hy, W*.38);
-      halo.addColorStop(0,   'rgba(160,235,255,.42)');
-      halo.addColorStop(.18, 'rgba(60,170,255,.20)');
-      halo.addColorStop(.50, 'rgba(20,100,230,.07)');
-      halo.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = halo; ctx.fillRect(0, 0, W, H);
-      ctx.restore();
-
-      // Circular vignette mask — softens edges into the dark hero bg
-      const vig = ctx.createRadialGradient(W*.5, H*.5, W*.3, W*.5, H*.5, W*.72);
-      vig.addColorStop(0, 'rgba(0,0,0,0)');
-      vig.addColorStop(1, 'rgba(6,8,16,0.72)');
-      ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
-
-      t += 0.014;
+      fr++;
       requestAnimationFrame(draw);
     }
     draw();
