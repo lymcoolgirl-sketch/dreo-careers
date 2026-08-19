@@ -1563,7 +1563,7 @@
         const uploadRes  = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: uploadFd });
         const uploadJson = await uploadRes.json();
         if (uploadJson.file) {
-          resumeUrl = 'https://ucarecdn.com/' + uploadJson.file + '/' + encodeURIComponent(file.name);
+          resumeUrl = 'https://ucarecdn.com/' + uploadJson.file + '/-/inline/yes/';
         } else if (!resumeLink) {
           throw new Error('文件上传失败，请改用链接投递');
         }
