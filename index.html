@@ -607,6 +607,89 @@
   .hero-cta svg, .apply-btn svg, .apply-main-btn svg { transition: transform 0.2s; }
   .hero-cta:hover svg, .apply-btn:hover svg, .apply-main-btn:hover svg { transform: translateX(3px); }
 
+  /* ── Apply Modal ── */
+  .amodal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 600;
+    background: rgba(0,0,0,0.78); backdrop-filter: blur(14px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .amodal-overlay.open { display: flex; }
+
+  .amodal-box {
+    background: #0d1020; border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 20px; padding: 40px 40px 36px;
+    max-width: 520px; width: 100%; position: relative;
+    animation: pmodal-in 0.22s ease;
+    max-height: 90vh; overflow-y: auto;
+  }
+
+  .amodal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12); background: none;
+    cursor: pointer; color: rgba(255,255,255,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: background 0.2s;
+  }
+  .amodal-close:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+  .amodal-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .amodal-sub   { font-size: 13px; color: rgba(255,255,255,0.40); margin-bottom: 28px; }
+
+  .form-grid { display: flex; flex-direction: column; gap: 16px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.50); letter-spacing: 0.05em; }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px; padding: 11px 14px;
+    font-size: 14px; color: #fff; font-family: var(--font);
+    outline: none; transition: border-color 0.2s, background 0.2s;
+    width: 100%;
+  }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: rgba(255,255,255,0.25); }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--blue); background: rgba(77,159,255,0.06);
+  }
+  .form-group select option { background: #1a2035; color: #fff; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  .form-submit {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, #1a6fff 0%, #00a3ff 100%);
+    color: #fff; font-size: 15px; font-weight: 600;
+    border: none; border-radius: 100px; cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    margin-top: 4px; font-family: var(--font);
+  }
+  .form-submit:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 10px 28px rgba(26,111,255,0.4); }
+  .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .form-msg {
+    font-size: 13px; padding: 10px 14px; border-radius: 8px;
+    text-align: center; display: none; margin-top: 4px;
+  }
+  .form-msg.success {
+    display: block; background: rgba(0,200,100,0.12);
+    border: 1px solid rgba(0,200,100,0.25); color: #4de8a0;
+  }
+  .form-msg.error {
+    display: block; background: rgba(255,80,80,0.10);
+    border: 1px solid rgba(255,80,80,0.22); color: #ff8080;
+  }
+
+  .form-note { font-size: 12px; color: rgba(255,255,255,0.28); text-align: center; margin-top: 12px; line-height: 1.7; }
+
   /* ── Responsive ── */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -619,6 +702,8 @@
     footer { padding: 32px 20px; flex-direction: column; align-items: flex-start; }
     .ach-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 20px 16px; flex: 1 1 45%; }
     .ach-item:last-child { border-bottom: none; }
+    .amodal-box { padding: 28px 20px 24px; }
+    .form-row { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -893,10 +978,10 @@
               <li>具备 AI 原生工作流的学习能力，以及总结沉淀方法论的能力</li>
             </ul>
           </div>
-          <a class="apply-btn" href="mailto:kaia.lyu@dreo.com?subject=应聘｜AI产品经理·智能厨电产品">
+          <button class="apply-btn" onclick="openApply('AI 产品经理 · 智能厨电产品')">
             立即投递简历
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
+          </button>
         </div>
       </div>
 
@@ -946,10 +1031,10 @@
               <li>能在技术框架和业务框架上同时提出创新方向</li>
             </ul>
           </div>
-          <a class="apply-btn" href="mailto:kaia.lyu@dreo.com?subject=应聘｜AI产品经理·APP AI产品设计">
+          <button class="apply-btn" onclick="openApply('AI 产品经理 · APP AI 产品设计')">
             立即投递简历
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
+          </button>
         </div>
       </div>
 
@@ -1003,10 +1088,10 @@
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       <a class="apply-email" href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
       <p class="apply-note">请在邮件标题注明应聘岗位，并附上简历（PDF 格式）<br>及能体现你能力的项目案例或作品集</p>
-      <a class="apply-main-btn" href="mailto:kaia.lyu@dreo.com?subject=应聘｜DREO AIoT 产品岗位">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        发送简历
-      </a>
+      <button class="apply-main-btn" onclick="openApply()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        立即投递简历
+      </button>
     </div>
   </div>
 </section>
@@ -1020,6 +1105,56 @@
     <a href="mailto:kaia.lyu@dreo.com">kaia.lyu@dreo.com</a>
   </div>
 </footer>
+
+<!-- Apply Form Modal -->
+<div id="apply-modal" class="amodal-overlay">
+  <div class="amodal-box">
+    <button class="amodal-close" id="amodal-close">✕</button>
+    <div class="amodal-title">投递简历</div>
+    <div class="amodal-sub">填写信息后提交，HR 3个工作日内联系你</div>
+    <form id="apply-form" class="form-grid" novalidate>
+      <input type="hidden" name="access_key" value="47b735cd-6dda-42d8-9274-9c8122ba2508">
+      <input type="hidden" name="subject" id="form-subject" value="DREO 招聘投递">
+      <input type="hidden" name="from_name" value="DREO 招聘网站">
+      <input type="checkbox" name="botcheck" style="display:none">
+      <div class="form-row">
+        <div class="form-group">
+          <label>姓名 *</label>
+          <input type="text" name="姓名" required placeholder="你的姓名">
+        </div>
+        <div class="form-group">
+          <label>电话 *</label>
+          <input type="tel" name="电话" required placeholder="手机号码">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>邮箱 *</label>
+        <input type="email" name="email" required placeholder="用于接收面试通知">
+      </div>
+      <div class="form-group">
+        <label>应聘岗位 *</label>
+        <select name="应聘岗位" id="form-position" required>
+          <option value="AI 产品经理 · 智能厨电产品">AI 产品经理 · 智能厨电产品</option>
+          <option value="AI 产品经理 · APP AI 产品设计">AI 产品经理 · APP AI 产品设计</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>简历链接（百度网盘 / Google Drive / 飞书等）</label>
+        <input type="text" name="简历链接" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>自我介绍</label>
+        <textarea name="自我介绍" placeholder="简单介绍你自己，以及为什么想加入 DREO（选填）"></textarea>
+      </div>
+      <button type="submit" class="form-submit" id="form-submit-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        提交投递
+      </button>
+      <div class="form-msg" id="form-msg"></div>
+      <p class="form-note">如需直接发送简历：<a href="mailto:kaia.lyu@dreo.com" style="color:rgba(255,255,255,0.5)">kaia.lyu@dreo.com</a></p>
+    </form>
+  </div>
+</div>
 
 <!-- Product Modal -->
 <div id="pmodal" class="pmodal-overlay">
@@ -1338,6 +1473,64 @@
   ['why','jobs','process','apply'].forEach(id => {
     const el = document.getElementById(id);
     if (el) secObs.observe(el);
+  });
+
+  // ── Apply Modal ──
+  function openApply(position) {
+    const sel = document.getElementById('form-position');
+    if (position && sel) {
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === position) { sel.selectedIndex = i; break; }
+      }
+    }
+    document.getElementById('apply-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('form-msg').className = 'form-msg';
+    document.getElementById('form-msg').textContent = '';
+  }
+
+  function closeApply() {
+    document.getElementById('apply-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('amodal-close').addEventListener('click', closeApply);
+  document.getElementById('apply-modal').addEventListener('click', e => {
+    if (e.target.id === 'apply-modal') closeApply();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApply(); });
+
+  document.getElementById('apply-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('form-submit-btn');
+    const msg = document.getElementById('form-msg');
+    const position = document.getElementById('form-position').value;
+    document.getElementById('form-subject').value = '应聘｜' + position;
+
+    btn.disabled = true;
+    btn.textContent = '提交中...';
+    msg.className = 'form-msg';
+
+    const data = new FormData(this);
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST', body: data
+      });
+      const json = await res.json();
+      if (json.success) {
+        msg.className = 'form-msg success';
+        msg.textContent = '✓ 投递成功！HR 会在 3 个工作日内联系你。';
+        this.reset();
+        btn.textContent = '已提交';
+      } else {
+        throw new Error(json.message || '提交失败');
+      }
+    } catch(err) {
+      msg.className = 'form-msg error';
+      msg.textContent = '提交失败，请直接发送简历至 kaia.lyu@dreo.com';
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> 提交投递';
+    }
   });
 </script>
 </body>
