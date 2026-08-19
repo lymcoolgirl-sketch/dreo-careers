@@ -1123,10 +1123,11 @@
     <button class="amodal-close" id="amodal-close">✕</button>
     <div class="amodal-title">投递简历</div>
     <div class="amodal-sub">填写信息后提交，HR 3个工作日内联系你</div>
-    <form id="apply-form" class="form-grid" name="apply" data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
-      <input type="hidden" name="form-name" value="apply">
+    <form id="apply-form" class="form-grid" novalidate>
+      <input type="hidden" name="access_key" value="47b735cd-6dda-42d8-9274-9c8122ba2508">
       <input type="hidden" name="subject" id="form-subject" value="DREO 招聘投递">
-      <input name="bot-field" style="display:none">
+      <input type="hidden" name="from_name" value="DREO 招聘网站">
+      <input type="checkbox" name="botcheck" style="display:none">
       <div class="form-row">
         <div class="form-group">
           <label>姓名 *</label>
@@ -1149,16 +1150,8 @@
         </select>
       </div>
       <div class="form-group">
-        <label>上传简历（PDF / Word，≤10MB）</label>
-        <label class="file-upload-label" id="file-label">
-          <input type="file" name="attachment" id="resume-file" accept=".pdf,.doc,.docx" style="display:none">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span id="file-name">点击选择文件</span>
-        </label>
-      </div>
-      <div class="form-group">
-        <label>或填写简历链接（百度网盘 / Google Drive 等）</label>
-        <input type="text" name="简历链接" placeholder="https://...">
+        <label>简历链接 * （百度网盘 / 飞书 / Google Drive 等）</label>
+        <input type="text" name="简历链接" required placeholder="https://... 请先上传简历再粘贴分享链接">
       </div>
       <div class="form-group">
         <label>自我介绍</label>
@@ -1512,18 +1505,6 @@
     document.body.style.overflow = '';
   }
 
-  document.getElementById('resume-file').addEventListener('change', function() {
-    const label = document.getElementById('file-label');
-    const nameEl = document.getElementById('file-name');
-    if (this.files && this.files[0]) {
-      nameEl.textContent = this.files[0].name;
-      label.classList.add('has-file');
-    } else {
-      nameEl.textContent = '点击选择文件';
-      label.classList.remove('has-file');
-    }
-  });
-
   document.getElementById('amodal-close').addEventListener('click', closeApply);
   document.getElementById('apply-modal').addEventListener('click', e => {
     if (e.target.id === 'apply-modal') closeApply();
@@ -1541,22 +1522,18 @@
     btn.textContent = '提交中...';
     msg.className = 'form-msg';
 
-    const fileInput = document.getElementById('resume-file');
-    const hasFile = fileInput.files && fileInput.files[0];
-
     const data = new FormData(this);
 
     try {
-      const res = await fetch('/', { method: 'POST', body: data });
-      if (res.ok) {
+      const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data });
+      const json = await res.json();
+      if (json.success) {
         msg.className = 'form-msg success';
         msg.textContent = '✓ 投递成功！HR 会在 3 个工作日内联系你。';
         this.reset();
-        document.getElementById('file-name').textContent = '点击选择文件';
-        document.getElementById('file-label').classList.remove('has-file');
         btn.textContent = '已提交';
       } else {
-        throw new Error('提交失败');
+        throw new Error(json.message || '提交失败');
       }
     } catch(err) {
       msg.className = 'form-msg error';
