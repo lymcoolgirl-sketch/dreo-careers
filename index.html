@@ -1123,11 +1123,10 @@
     <button class="amodal-close" id="amodal-close">✕</button>
     <div class="amodal-title">投递简历</div>
     <div class="amodal-sub">填写信息后提交，HR 3个工作日内联系你</div>
-    <form id="apply-form" class="form-grid" novalidate>
-      <input type="hidden" name="access_key" value="47b735cd-6dda-42d8-9274-9c8122ba2508">
+    <form id="apply-form" class="form-grid" name="apply" data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="apply">
       <input type="hidden" name="subject" id="form-subject" value="DREO 招聘投递">
-      <input type="hidden" name="from_name" value="DREO 招聘网站">
-      <input type="checkbox" name="botcheck" style="display:none">
+      <input name="bot-field" style="display:none">
       <div class="form-row">
         <div class="form-group">
           <label>姓名 *</label>
@@ -1544,31 +1543,20 @@
 
     const fileInput = document.getElementById('resume-file');
     const hasFile = fileInput.files && fileInput.files[0];
-    const fileName = hasFile ? fileInput.files[0].name : '';
 
     const data = new FormData(this);
-    // Web3Forms free plan doesn't support attachments — strip file, note it in text
-    data.delete('attachment');
-    if (hasFile) data.append('简历附件', fileName + '（将通过邮件单独发送）');
 
     try {
-      const res = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST', body: data
-      });
-      const json = await res.json();
-      if (json.success) {
+      const res = await fetch('/', { method: 'POST', body: data });
+      if (res.ok) {
         msg.className = 'form-msg success';
-        if (hasFile) {
-          msg.innerHTML = '✓ 投递成功！HR 会在 3 个工作日内联系你。<br><span style="font-size:12px;opacity:0.7">📎 请将简历文件 <b>' + fileName + '</b> 发送至 kaia.lyu@dreo.com</span>';
-        } else {
-          msg.textContent = '✓ 投递成功！HR 会在 3 个工作日内联系你。';
-        }
+        msg.textContent = '✓ 投递成功！HR 会在 3 个工作日内联系你。';
         this.reset();
         document.getElementById('file-name').textContent = '点击选择文件';
         document.getElementById('file-label').classList.remove('has-file');
         btn.textContent = '已提交';
       } else {
-        throw new Error(json.message || '提交失败');
+        throw new Error('提交失败');
       }
     } catch(err) {
       msg.className = 'form-msg error';
