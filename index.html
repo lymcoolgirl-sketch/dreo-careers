@@ -1124,8 +1124,6 @@
     <div class="amodal-title">投递简历</div>
     <div class="amodal-sub">填写信息后提交，HR 3个工作日内联系你</div>
     <form id="apply-form" class="form-grid" novalidate>
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_subject" id="form-subject" value="DREO 招聘投递">
       <div class="form-row">
         <div class="form-group">
           <label>姓名 *</label>
@@ -1531,11 +1529,14 @@
     e.preventDefault();
     const btn = document.getElementById('form-submit-btn');
     const msg = document.getElementById('form-msg');
-    const position = document.getElementById('form-position').value;
-    document.getElementById('form-subject').value = '应聘｜' + position;
 
-    const file       = document.getElementById('resume-file-input').files[0];
-    const resumeLink = document.getElementById('resume-link-input').value.trim();
+    const name         = this.querySelector('[name="name"]').value.trim();
+    const phone        = this.querySelector('[name="phone"]').value.trim();
+    const email        = this.querySelector('[name="email"]').value.trim();
+    const position     = document.getElementById('form-position').value;
+    const introduction = this.querySelector('[name="introduction"]').value.trim();
+    const file         = document.getElementById('resume-file-input').files[0];
+    const resumeLink   = document.getElementById('resume-link-input').value.trim();
 
     if (!file && !resumeLink) {
       msg.className = 'form-msg error';
@@ -1544,15 +1545,26 @@
     }
 
     btn.disabled = true;
-    btn.textContent = '提交中...';
+    btn.textContent = '处理中...';
     msg.className = 'form-msg';
 
-    const data = new FormData(this);
-
     try {
-      const res  = await fetch('https://formsubmit.co/ajax/kaia.lyu@dreo.com', {
+      let fileData = null, fileName = null;
+      if (file) {
+        btn.textContent = '读取简历中...';
+        fileData = await new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = ev => resolve(ev.target.result.split(',')[1]);
+          reader.readAsDataURL(file);
+        });
+        fileName = file.name;
+      }
+
+      btn.textContent = '提交中...';
+      const res  = await fetch('/.netlify/functions/submit', {
         method: 'POST',
-        body: data
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email, position, introduction, fileData, fileName, resumeLink: fileData ? null : resumeLink })
       });
       const json = await res.json();
       if (json.success) {
