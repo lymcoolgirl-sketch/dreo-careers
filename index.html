@@ -1124,18 +1124,16 @@
     <div class="amodal-title">投递简历</div>
     <div class="amodal-sub">填写信息后提交，HR 3个工作日内联系你</div>
     <form id="apply-form" class="form-grid" novalidate>
-      <input type="hidden" name="access_key" value="47b735cd-6dda-42d8-9274-9c8122ba2508">
-      <input type="hidden" name="subject" id="form-subject" value="DREO 招聘投递">
-      <input type="hidden" name="from_name" value="DREO 招聘网站">
-      <input type="checkbox" name="botcheck" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_subject" id="form-subject" value="DREO 招聘投递">
       <div class="form-row">
         <div class="form-group">
           <label>姓名 *</label>
-          <input type="text" name="姓名" required placeholder="你的姓名">
+          <input type="text" name="name" required placeholder="你的姓名">
         </div>
         <div class="form-group">
           <label>电话 *</label>
-          <input type="tel" name="电话" required placeholder="手机号码">
+          <input type="tel" name="phone" required placeholder="手机号码">
         </div>
       </div>
       <div class="form-group">
@@ -1144,7 +1142,7 @@
       </div>
       <div class="form-group">
         <label>应聘岗位 *</label>
-        <select name="应聘岗位" id="form-position" required>
+        <select name="position" id="form-position" required>
           <option value="AI 产品经理 · 智能厨电产品">AI 产品经理 · 智能厨电产品</option>
           <option value="AI 产品经理 · APP AI 产品设计">AI 产品经理 · APP AI 产品设计</option>
         </select>
@@ -1155,13 +1153,13 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span id="resume-file-text">点击上传简历（PDF / Word，最大 30MB）</span>
         </label>
-        <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx,.ppt,.pptx" style="display:none">
+        <input type="file" name="attachment" id="resume-file-input" accept=".pdf,.doc,.docx,.ppt,.pptx" style="display:none">
         <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.22);margin:2px 0">— 或粘贴分享链接 —</div>
-        <input type="text" id="resume-link-input" placeholder="百度网盘 / 飞书 / Google Drive 等">
+        <input type="text" name="resume_link" id="resume-link-input" placeholder="百度网盘 / 飞书 / Google Drive 等">
       </div>
       <div class="form-group">
         <label>自我介绍</label>
-        <textarea name="自我介绍" placeholder="简单介绍你自己，以及为什么想加入 DREO（选填）"></textarea>
+        <textarea name="introduction" placeholder="简单介绍你自己，以及为什么想加入 DREO（选填）"></textarea>
       </div>
       <button type="submit" class="form-submit" id="form-submit-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -1517,8 +1515,6 @@
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApply(); });
 
-  const UPLOADCARE_KEY = '6caf797b46551884d724';
-
   document.getElementById('resume-file-input').addEventListener('change', function() {
     const label = document.getElementById('resume-file-label');
     const text  = document.getElementById('resume-file-text');
@@ -1548,31 +1544,16 @@
     }
 
     btn.disabled = true;
+    btn.textContent = '提交中...';
     msg.className = 'form-msg';
+
     const data = new FormData(this);
 
     try {
-      let resumeUrl = resumeLink;
-
-      if (file) {
-        btn.textContent = '上传简历中...';
-        const uploadFd = new FormData();
-        uploadFd.append('UPLOADCARE_PUB_KEY', UPLOADCARE_KEY);
-        uploadFd.append('UPLOADCARE_STORE', '1');
-        uploadFd.append('file', file);
-        const uploadRes  = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: uploadFd });
-        const uploadJson = await uploadRes.json();
-        if (uploadJson.file) {
-          resumeUrl = 'https://ucarecdn.com/' + uploadJson.file + '/-/inline/yes/';
-        } else if (!resumeLink) {
-          throw new Error('文件上传失败，请改用链接投递');
-        }
-      }
-
-      data.append('简历链接', resumeUrl);
-      btn.textContent = '提交中...';
-
-      const res  = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data });
+      const res  = await fetch('https://formsubmit.co/ajax/kaia.lyu@dreo.com', {
+        method: 'POST',
+        body: data
+      });
       const json = await res.json();
       if (json.success) {
         msg.className = 'form-msg success';
@@ -1582,11 +1563,11 @@
         document.getElementById('resume-file-text').textContent = '点击上传简历（PDF / Word，最大 30MB）';
         btn.textContent = '已提交';
       } else {
-        throw new Error(json.message || '提交失败');
+        throw new Error('提交失败');
       }
     } catch(err) {
       msg.className = 'form-msg error';
-      msg.textContent = err.message.includes('上传') ? err.message : '提交失败，请直接发送简历至 kaia.lyu@dreo.com';
+      msg.textContent = '提交失败，请直接发送简历至 kaia.lyu@dreo.com';
       btn.disabled = false;
       btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> 提交投递';
     }
