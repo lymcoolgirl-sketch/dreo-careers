@@ -1559,11 +1559,7 @@
       if (json.success) {
         msg.className = 'form-msg success';
         if (hasFile) {
-          const mailSubject = encodeURIComponent('简历附件｜' + position);
-          const mailBody = encodeURIComponent('您好，这是我的简历附件，文件名：' + fileName);
-          msg.innerHTML = '✓ 投递成功！HR 会在 3 个工作日内联系你。<br><br>'
-            + '<a href="mailto:kaia.lyu@dreo.com?subject=' + mailSubject + '&body=' + mailBody + '" '
-            + 'style="color:#7dbfff;font-weight:600;">📎 点此发送简历附件</a>';
+          msg.innerHTML = '✓ 投递成功！HR 会在 3 个工作日内联系你。<br><span style="font-size:12px;opacity:0.7">📎 请将简历文件 <b>' + fileName + '</b> 发送至 kaia.lyu@dreo.com</span>';
         } else {
           msg.textContent = '✓ 投递成功！HR 会在 3 个工作日内联系你。';
         }
