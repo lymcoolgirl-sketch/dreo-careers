@@ -1542,7 +1542,15 @@
     btn.textContent = '提交中...';
     msg.className = 'form-msg';
 
+    const fileInput = document.getElementById('resume-file');
+    const hasFile = fileInput.files && fileInput.files[0];
+    const fileName = hasFile ? fileInput.files[0].name : '';
+
     const data = new FormData(this);
+    // Web3Forms free plan doesn't support attachments — strip file, note it in text
+    data.delete('attachment');
+    if (hasFile) data.append('简历附件', fileName + '（将通过邮件单独发送）');
+
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST', body: data
@@ -1550,8 +1558,18 @@
       const json = await res.json();
       if (json.success) {
         msg.className = 'form-msg success';
-        msg.textContent = '✓ 投递成功！HR 会在 3 个工作日内联系你。';
+        if (hasFile) {
+          const mailSubject = encodeURIComponent('简历附件｜' + position);
+          const mailBody = encodeURIComponent('您好，这是我的简历附件，文件名：' + fileName);
+          msg.innerHTML = '✓ 投递成功！HR 会在 3 个工作日内联系你。<br><br>'
+            + '<a href="mailto:kaia.lyu@dreo.com?subject=' + mailSubject + '&body=' + mailBody + '" '
+            + 'style="color:#7dbfff;font-weight:600;">📎 点此发送简历附件</a>';
+        } else {
+          msg.textContent = '✓ 投递成功！HR 会在 3 个工作日内联系你。';
+        }
         this.reset();
+        document.getElementById('file-name').textContent = '点击选择文件';
+        document.getElementById('file-label').classList.remove('has-file');
         btn.textContent = '已提交';
       } else {
         throw new Error(json.message || '提交失败');
