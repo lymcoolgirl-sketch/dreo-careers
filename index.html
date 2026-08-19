@@ -690,6 +690,17 @@
 
   .form-note { font-size: 12px; color: rgba(255,255,255,0.28); text-align: center; margin-top: 12px; line-height: 1.7; }
 
+  .file-upload-label {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px dashed rgba(255,255,255,0.20);
+    border-radius: 10px; padding: 12px 16px;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    color: rgba(255,255,255,0.55); font-size: 14px;
+  }
+  .file-upload-label:hover { border-color: var(--blue); background: rgba(77,159,255,0.06); color: #7dbfff; }
+  .file-upload-label.has-file { border-color: rgba(0,200,100,0.4); background: rgba(0,200,100,0.06); color: #4de8a0; }
+
   /* ── Responsive ── */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -1139,7 +1150,15 @@
         </select>
       </div>
       <div class="form-group">
-        <label>简历链接（百度网盘 / Google Drive / 飞书等）</label>
+        <label>上传简历（PDF / Word，≤10MB）</label>
+        <label class="file-upload-label" id="file-label">
+          <input type="file" name="attachment" id="resume-file" accept=".pdf,.doc,.docx" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span id="file-name">点击选择文件</span>
+        </label>
+      </div>
+      <div class="form-group">
+        <label>或填写简历链接（百度网盘 / Google Drive 等）</label>
         <input type="text" name="简历链接" placeholder="https://...">
       </div>
       <div class="form-group">
@@ -1493,6 +1512,18 @@
     document.getElementById('apply-modal').classList.remove('open');
     document.body.style.overflow = '';
   }
+
+  document.getElementById('resume-file').addEventListener('change', function() {
+    const label = document.getElementById('file-label');
+    const nameEl = document.getElementById('file-name');
+    if (this.files && this.files[0]) {
+      nameEl.textContent = this.files[0].name;
+      label.classList.add('has-file');
+    } else {
+      nameEl.textContent = '点击选择文件';
+      label.classList.remove('has-file');
+    }
+  });
 
   document.getElementById('amodal-close').addEventListener('click', closeApply);
   document.getElementById('apply-modal').addEventListener('click', e => {
