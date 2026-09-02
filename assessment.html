@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DREO 2027校招 · AIoT产品经理笔试</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E8001C;--black:#111111;--white:#fff;
+  --g50:#FAFAFA;--g100:#F5F5F5;--g200:#E5E5E5;--g400:#999;--g600:#666;--g800:#333;
+  --green:#00B96B;--r:8px;--sh:0 2px 12px rgba(0,0,0,.08)
+}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif;background:var(--g50);color:var(--black);line-height:1.6;min-height:100vh}
+
+/* ── sticky header ── */
+.hd{position:sticky;top:0;z-index:100;background:var(--black);color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-logo{font-size:20px;font-weight:800;letter-spacing:2px}
+.hd-sub{font-size:13px;color:rgba(255,255,255,.5);border-left:1px solid rgba(255,255,255,.2);padding-left:12px}
+.hd-right{display:flex;align-items:center;gap:20px}
+#timer{font-size:15px;font-weight:700;letter-spacing:1px;transition:color .3s}
+#timer.warn{color:#FFB800}
+#timer.danger{color:var(--red);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+.pb-wrap{height:3px;width:90px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:3px;overflow:hidden}
+.pb-fill{height:100%;background:var(--red);border-radius:2px;transition:width .3s}
+
+/* ── layout ── */
+.wrap{max-width:800px;margin:0 auto;padding:28px 20px 80px}
+
+/* ── hero ── */
+.hero{background:var(--black);color:#fff;border-radius:var(--r);padding:36px 40px;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--red)}
+.hero-tag{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.hero-h1{font-size:26px;font-weight:800;line-height:1.2;margin-bottom:4px}
+.hero-h2{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:26px}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap}
+.meta-item{}
+.meta-label{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:1px;margin-bottom:2px}
+.meta-val{font-size:14px;font-weight:600}
+
+/* ── card ── */
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:28px 32px;margin-bottom:16px;box-shadow:var(--sh)}
+.card-notice{background:var(--g50);border:1.5px dashed var(--g200)}
+
+/* ── section header ── */
+.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid var(--g100)}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:.5px;color:#fff;background:var(--black)}
+.badge.red{background:var(--red)}
+.badge.gold{background:#CC8800;color:#fff}
+.sec-title{font-size:17px;font-weight:700}
+.sec-score{margin-left:auto;font-size:12px;color:var(--g600);font-weight:500}
+
+/* ── info grid ── */
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.fl{font-size:13px;font-weight:600;color:var(--g800)}
+.fl .req{color:var(--red);margin-left:2px}
+.fi{height:42px;padding:0 13px;border:1.5px solid var(--g200);border-radius:6px;font-size:14px;font-family:inherit;color:var(--black);background:#fff;transition:border-color .2s;outline:none}
+.fi:focus{border-color:var(--black)}
+.fi.err{border-color:var(--red)}
+
+/* ── question ── */
+.q{margin-bottom:26px;padding-bottom:26px;border-bottom:1px solid var(--g100)}
+.q:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.q-hd{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.q-num{flex-shrink:0;width:26px;height:26px;background:var(--black);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.q-tag{flex-shrink:0;font-size:11px;font-weight:600;color:var(--g400);padding:2px 7px;background:var(--g100);border-radius:4px;margin-top:2px}
+.q-text{font-size:14.5px;font-weight:500;line-height:1.7;flex:1}
+.q-pts{flex-shrink:0;font-size:11px;color:var(--g400);font-weight:500;margin-top:3px;white-space:nowrap}
+
+/* ── options ── */
+.opts{display:flex;flex-direction:column;gap:7px;margin-left:36px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border:1.5px solid var(--g200);border-radius:6px;cursor:pointer;transition:all .15s;user-select:none}
+.opt:hover{border-color:var(--black);background:var(--g50)}
+.opt.sel{border-color:var(--black);background:var(--g50)}
+.opt input[type=radio]{display:none}
+.opt-circle{flex-shrink:0;width:17px;height:17px;border:2px solid var(--g400);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .15s}
+.opt.sel .opt-circle{border-color:var(--black);background:var(--black)}
+.opt.sel .opt-circle::after{content:'';width:5px;height:5px;background:#fff;border-radius:50%}
+.opt-ltr{font-weight:700;color:var(--g600);font-size:13px;margin-top:2px;flex-shrink:0}
+.opt-txt{font-size:14px;line-height:1.5}
+.opt.sel .opt-txt{font-weight:600}
+
+/* ── context box ── */
+.ctx{margin:0 0 14px 36px;padding:13px 15px;background:var(--g100);border-radius:6px;border-left:3px solid var(--g400);font-size:13.5px;line-height:1.7;color:var(--g800)}
+.ctx.en{border-left-color:var(--black);font-style:italic;font-size:14px}
+
+/* ── sub-items ── */
+.sub-list{margin:12px 0 4px 36px;display:flex;flex-direction:column;gap:5px}
+.sub-row{display:flex;gap:8px;font-size:14px;line-height:1.6}
+.sub-l{font-weight:700;color:var(--g600);flex-shrink:0}
+
+/* ── ask items ── */
+.ask-list{margin:14px 0 10px 36px}
+.ask-row{display:flex;gap:8px;padding:9px 0;border-bottom:1px dashed var(--g200)}
+.ask-row:last-child{border-bottom:none}
+.ask-n{font-weight:700;color:var(--red);flex-shrink:0;min-width:20px;font-size:14px}
+.ask-t{font-size:14px;line-height:1.6}
+.ask-s{margin-left:auto;font-size:12px;color:var(--g400);flex-shrink:0;padding-left:12px}
+
+/* ── textarea ── */
+.ta-label{font-size:12px;font-weight:600;color:var(--g600);margin:10px 0 5px 36px;letter-spacing:.3px}
+.ta{width:100%;padding:13px;border:1.5px solid var(--g200);border-radius:6px;font-size:14px;font-family:inherit;color:var(--black);resize:vertical;min-height:120px;line-height:1.7;transition:border-color .2s;outline:none}
+.ta:focus{border-color:var(--black)}
+.ta.err{border-color:var(--red)}
+.ta-footer{display:flex;justify-content:space-between;margin-top:5px;padding:0 0 0 36px}
+.cc{font-size:12px;color:var(--g400)}
+.cc.over{color:var(--red)}
+.ta-hint{font-size:12px;color:var(--g400)}
+
+/* ── submit ── */
+.submit-notice{padding:13px 17px;background:var(--g100);border-radius:6px;font-size:13px;color:var(--g600);line-height:1.7;margin-bottom:14px}
+.submit-notice strong{color:var(--black)}
+.btn{width:100%;height:52px;background:var(--black);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:1px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover:not(:disabled){background:#333}
+.btn:active:not(:disabled){transform:scale(.99)}
+.btn:disabled{background:var(--g400);cursor:not-allowed}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── modal ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:12px;padding:48px 40px;max-width:420px;width:90%;text-align:center}
+.modal-icon{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
+.modal-icon.ok{background:var(--green);color:#fff}
+
+/* ── already submitted screen ── */
+.done-wrap{max-width:480px;margin:100px auto;text-align:center;padding:20px}
+
+/* ── error text ── */
+.err-txt{font-size:12px;color:var(--red);margin-top:4px}
+
+/* ── responsive ── */
+@media(max-width:600px){
+  .ig{grid-template-columns:1fr}
+  .hero{padding:24px 20px}
+  .hero-h1{font-size:22px}
+  .card{padding:20px 16px}
+  .opts,.ctx,.sub-list,.ask-list,.ta-label,.ta-footer{margin-left:0}
+  .hero-meta{gap:18px}
+  .hd-sub{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ ALREADY SUBMITTED SCREEN ════ -->
+<div id="screen-done" style="display:none">
+  <header class="hd">
+    <div class="hd-left">
+      <span class="hd-logo">DREO</span>
+      <span class="hd-sub">2027校招 · AIoT产品经理笔试</span>
+    </div>
+  </header>
+  <div class="done-wrap">
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:34px">🎯</div>
+    <div style="font-size:24px;font-weight:800;margin-bottom:12px">您已提交过本次测评</div>
+    <div style="color:var(--g600);font-size:15px;line-height:1.9">
+      每人限提交一次，您的答卷已于<br>
+      <strong id="done-time" style="color:var(--black)"></strong><br>
+      成功提交，感谢参与 DREO 2027 校园招聘。
+    </div>
+  </div>
+</div>
+
+<!-- ════ MAIN EXAM SCREEN ════ -->
+<div id="screen-main">
+
+  <!-- Sticky header -->
+  <header class="hd">
+    <div class="hd-left">
+      <span class="hd-logo">DREO</span>
+      <span class="hd-sub">2027校招 · AIoT产品经理笔试</span>
+    </div>
+    <div class="hd-right">
+      <div id="timer">⏱ 45:00</div>
+      <div style="text-align:right">
+        <div id="prog-txt" style="font-size:11px;color:rgba(255,255,255,.45)">完成度 0/14</div>
+        <div class="pb-wrap"><div id="prog-bar" class="pb-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-tag">2027 Campus Recruitment · DREO</div>
+      <div class="hero-h1">AIoT 产品经理<br>校招笔试题</div>
+      <div class="hero-h2">轻量版 · 2026 AI &amp; 智能家居主题</div>
+      <div class="hero-meta">
+        <div class="meta-item"><div class="meta-label">DURATION</div><div class="meta-val">45 分钟</div></div>
+        <div class="meta-item"><div class="meta-label">QUESTIONS</div><div class="meta-val">10 选择 + 3 简答 + 附加</div></div>
+        <div class="meta-item"><div class="meta-label">TOTAL SCORE</div><div class="meta-val">100 + 附加 5 分</div></div>
+        <div class="meta-item"><div class="meta-label">POSITION</div><div class="meta-val">AIoT 产品管培生</div></div>
+      </div>
+    </div>
+
+    <form id="test-form" novalidate>
+
+      <!-- ── 0 考生信息 ── -->
+      <div class="card">
+        <div class="sec-hd">
+          <span class="badge">基本信息</span>
+          <span class="sec-title">考生信息</span>
+        </div>
+        <div class="ig">
+          <div class="fg">
+            <label class="fl">姓名<span class="req">*</span></label>
+            <input class="fi" id="i-name" type="text" placeholder="请输入真实姓名">
+          </div>
+          <div class="fg">
+            <label class="fl">学校<span class="req">*</span></label>
+            <input class="fi" id="i-school" type="text" placeholder="就读院校">
+          </div>
+          <div class="fg">
+            <label class="fl">专业<span class="req">*</span></label>
+            <input class="fi" id="i-major" type="text" placeholder="所学专业">
+          </div>
+          <div class="fg">
+            <label class="fl">毕业年份<span class="req">*</span></label>
+            <input class="fi" id="i-year" type="text" placeholder="如：2027" maxlength="4">
+          </div>
+          <div class="fg">
+            <label class="fl">手机号<span class="req">*</span></label>
+            <input class="fi" id="i-phone" type="tel" placeholder="请输入手机号">
+          </div>
+          <div class="fg">
+            <label class="fl">邮箱<span class="req">*</span></label>
+            <input class="fi" id="i-email" type="email" placeholder="请输入邮箱">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 作答说明 ── -->
+      <div class="card card-notice">
+        <div style="font-size:13.5px;font-weight:700;margin-bottom:8px;color:var(--black)">📋 作答说明</div>
+        <div style="font-size:13px;color:var(--g600);line-height:1.9">
+          ① 计时已开始，考试时长 45 分钟，时间到将自动提交已作答内容；<br>
+          ② 选择题共 10 题单选，每题 4 分；简答题共 3 题，合计 60 分；附加题可选；<br>
+          ③ 简答题不设唯一答案，按思考过程给分；<br>
+          ④ <strong style="color:var(--black)">每人仅限提交一次</strong>，提交后不可修改；<br>
+          ⑤ 请独立完成，诚信作答。
+        </div>
+      </div>
+
+      <!-- ════ PART 1 · 选择题 ════ -->
+      <div class="card">
+        <div class="sec-hd">
+          <span class="badge">第一部分</span>
+          <span class="sec-title">选择题</span>
+          <span class="sec-score">共 10 题 · 每题 4 分 · 单选</span>
+        </div>
+
+        <!-- Q1 -->
+        <div class="q" id="wrap-q1">
+          <div class="q-hd">
+            <div class="q-num">1</div>
+            <div class="q-tag">逻辑推理</div>
+            <div class="q-text">智能音箱项目组的三位同事 A、B、C 分别负责 App、设备固件、云服务中的一个方向，每人恰好负责一个。已知：1）A 不负责 App；2）负责设备固件的人比 B 年龄大；3）A 比负责设备固件的人年龄小。请问谁负责 App？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q1">
+            <label class="opt"><input type="radio" name="q1" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">A</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">B</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">C</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">无法确定</span></label>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="q" id="wrap-q2">
+          <div class="q-hd">
+            <div class="q-num">2</div>
+            <div class="q-tag">数字估算</div>
+            <div class="q-text">某品牌塔扇月销量约 2 万台，其中约 30% 来自线上电商渠道。该产品每月在线上电商渠道大约卖出多少台？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q2">
+            <label class="opt"><input type="radio" name="q2" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">约 2000 台</span></label>
+            <label class="opt"><input type="radio" name="q2" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">约 6000 台</span></label>
+            <label class="opt"><input type="radio" name="q2" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">约 9000 台</span></label>
+            <label class="opt"><input type="radio" name="q2" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">约 14000 台</span></label>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="q" id="wrap-q3">
+          <div class="q-hd">
+            <div class="q-num">3</div>
+            <div class="q-tag">需求优先级</div>
+            <div class="q-text">智能风扇 App 收到 4 条用户反馈，若本版本只能先做 1 项，最应该选哪项？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q3">
+            <label class="opt"><input type="radio" name="q3" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">希望增加每日签到领积分功能</span></label>
+            <label class="opt"><input type="radio" name="q3" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">希望增加深色主题皮肤</span></label>
+            <label class="opt"><input type="radio" name="q3" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">系统升级后部分设备频繁掉线，需重新配网才能正常使用</span></label>
+            <label class="opt"><input type="radio" name="q3" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">希望定时通知的提示音多几种选择</span></label>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="q" id="wrap-q4">
+          <div class="q-hd">
+            <div class="q-num">4</div>
+            <div class="q-tag">AI 能力边界</div>
+            <div class="q-text">以下哪个场景最需要引入 AI／大模型，而不是用常规定时或固定规则实现？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q4">
+            <label class="opt"><input type="radio" name="q4" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">每晚 23:00 整自动关机</span></label>
+            <label class="opt"><input type="radio" name="q4" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">滤网累计使用满 100 小时后提醒清洁</span></label>
+            <label class="opt"><input type="radio" name="q4" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">出门时一键关闭家中所有设备</span></label>
+            <label class="opt"><input type="radio" name="q4" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">根据用户长期使用习惯与室内温湿度变化，自动调节风速和湿度</span></label>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="q" id="wrap-q5">
+          <div class="q-hd">
+            <div class="q-num">5</div>
+            <div class="q-tag">全球市场意识</div>
+            <div class="q-text">一款智能暖风机要进入一个海外新市场，以下哪项是最容易被忽略、但最可能直接影响使用体验的本地化问题？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q5">
+            <label class="opt"><input type="radio" name="q5" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">目标市场的家庭电压与插头标准不同，且当地用户习惯通过主流智能音箱／语音助手控制家电</span></label>
+            <label class="opt"><input type="radio" name="q5" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">包装箱的纸板厚度与国内是否一致</span></label>
+            <label class="opt"><input type="radio" name="q5" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">产品命名中是否保留了中文元素</span></label>
+            <label class="opt"><input type="radio" name="q5" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">App 启动动画是否足够炫酷</span></label>
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="q" id="wrap-q6">
+          <div class="q-hd">
+            <div class="q-num">6</div>
+            <div class="q-tag">数据敏感度</div>
+            <div class="q-text">智能塔扇「睡眠模式」开启率（每周活跃设备中开启该模式的占比）连续 3 周从 40% 降至 18%。作为产品经理，第一步最合理的做法是？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q6">
+            <label class="opt"><input type="radio" name="q6" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">立即重新设计睡眠模式的交互</span></label>
+            <label class="opt"><input type="radio" name="q6" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">加大推送力度，提醒用户开启该功能</span></label>
+            <label class="opt"><input type="radio" name="q6" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">先确认指标口径与数据采集前后是否一致，再按版本、用户群拆分定位变化发生在哪</span></label>
+            <label class="opt"><input type="radio" name="q6" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">直接下线该功能</span></label>
+          </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="q" id="wrap-q7">
+          <div class="q-hd">
+            <div class="q-num">7</div>
+            <div class="q-tag">智能家居常识</div>
+            <div class="q-text">用户分别购买了三个不同品牌的智能灯泡、空气净化器和电风扇，希望用同一个 App 或同一个语音助手统一控制。产品侧最需要确认的是什么？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q7">
+            <label class="opt"><input type="radio" name="q7" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">设备是否支持主流的统一接入标准或生态（如 Matter），并能兼容主流智能音箱／语音助手平台</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">三台设备的外观风格是否一致</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">三台设备的价格档位是否接近</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">三个品牌是否来自同一个国家</span></label>
+          </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="q" id="wrap-q8">
+          <div class="q-hd">
+            <div class="q-num">8</div>
+            <div class="q-tag">用户理解</div>
+            <div class="q-text">一条海外一星差评写道：「产品本身很好用，但第一次配对设置太复杂了，我差点退货。」对此最合理的判断是？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q8">
+            <label class="opt"><input type="radio" name="q8" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">产品硬件质量问题，应加强来料质检</span></label>
+            <label class="opt"><input type="radio" name="q8" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">物流运输损坏问题</span></label>
+            <label class="opt"><input type="radio" name="q8" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">用户动手能力问题，与产品无关</span></label>
+            <label class="opt"><input type="radio" name="q8" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">开箱配网是新用户的体验门槛，属于首次使用路径上的体验问题，值得优先优化</span></label>
+          </div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="q" id="wrap-q9">
+          <div class="q-hd">
+            <div class="q-num">9</div>
+            <div class="q-tag">指标选择</div>
+            <div class="q-text">要衡量智能设备「配网体验」好不好，以下哪组指标最合理？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q9">
+            <label class="opt"><input type="radio" name="q9" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">App 下载量</span></label>
+            <label class="opt"><input type="radio" name="q9" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">配网一次成功率、从开始到完成配网的耗时、配网失败的求助率</span></label>
+            <label class="opt"><input type="radio" name="q9" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">品牌社媒账号粉丝数</span></label>
+            <label class="opt"><input type="radio" name="q9" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">设备销售台数</span></label>
+          </div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="q" id="wrap-q10">
+          <div class="q-hd">
+            <div class="q-num">10</div>
+            <div class="q-tag">量级估算</div>
+            <div class="q-text">某城市约有 200 万户家庭，智能音箱保有量约每 4 户 1 台，每年新增与换新需求约为保有量的 10%。该城市智能音箱年销量的量级约为？</div>
+            <div class="q-pts">4 分</div>
+          </div>
+          <div class="opts" id="opts-q10">
+            <label class="opt"><input type="radio" name="q10" value="A"><div class="opt-circle"></div><span class="opt-ltr">A</span><span class="opt-txt">约 5 万台</span></label>
+            <label class="opt"><input type="radio" name="q10" value="B"><div class="opt-circle"></div><span class="opt-ltr">B</span><span class="opt-txt">约 20 万台</span></label>
+            <label class="opt"><input type="radio" name="q10" value="C"><div class="opt-circle"></div><span class="opt-ltr">C</span><span class="opt-txt">约 200 万台</span></label>
+            <label class="opt"><input type="radio" name="q10" value="D"><div class="opt-circle"></div><span class="opt-ltr">D</span><span class="opt-txt">约 2000 万台</span></label>
+          </div>
+        </div>
+
+      </div><!-- /Part 1 -->
+
+      <!-- ════ PART 2 · 简答题 ════ -->
+      <div class="card">
+        <div class="sec-hd">
+          <span class="badge red">第二部分</span>
+          <span class="sec-title">简答题</span>
+          <span class="sec-score">共 3 题 · 合计 60 分</span>
+        </div>
+
+        <!-- Q11 需求取舍 -->
+        <div class="q" id="wrap-q11">
+          <div class="q-hd">
+            <div class="q-num">11</div>
+            <div class="q-tag">需求取舍</div>
+            <div class="q-text">需求取舍与优先级</div>
+            <div class="q-pts">20 分</div>
+          </div>
+          <div class="ctx">
+            <strong>背景：</strong>你是智能风扇团队的实习产品经理。需求池中有 4 条需求，本版本 4 周内只能完成 2 项：
+          </div>
+          <div class="sub-list">
+            <div class="sub-row"><span class="sub-l">a.</span><span>多位用户反馈更换家里路由器后设备掉线，需要重新配网；</span></div>
+            <div class="sub-row"><span class="sub-l">b.</span><span>用户希望设置「入睡后自动关机」，避免夜间着凉或浪费电；</span></div>
+            <div class="sub-row"><span class="sub-l">c.</span><span>用户希望 App 支持深色模式；</span></div>
+            <div class="sub-row"><span class="sub-l">d.</span><span>用户希望通过主流智能音箱／语音助手语音控制设备。</span></div>
+          </div>
+          <div class="ask-list">
+            <div class="ask-row">
+              <span class="ask-n">①</span>
+              <span class="ask-t">你选哪 2 项？各用一两句话说明理由</span>
+              <span class="ask-s">12 分</span>
+            </div>
+            <div class="ask-row">
+              <span class="ask-n">②</span>
+              <span class="ask-t">未选的 2 项中挑 1 项，说明它什么时候适合做、为什么</span>
+              <span class="ask-s">8 分</span>
+            </div>
+          </div>
+          <div class="ta-label">① 选择 2 项并说明理由（12分）</div>
+          <textarea class="ta" id="q11a" name="q11a" rows="5" placeholder="请写出你选择的 2 项（如：选 a 和 d），并分别用一两句话说明选择理由……"></textarea>
+          <div class="ta-footer"><span class="cc" id="cc-q11a">0 字</span><span class="ta-hint">按思考过程给分，无唯一答案</span></div>
+          <div class="ta-label" style="margin-top:14px">② 未选项中挑 1 项，说明何时适合做（8分）</div>
+          <textarea class="ta" id="q11b" name="q11b" rows="4" placeholder="说明你认为哪个时间节点适合做这项需求，以及背后的判断逻辑……"></textarea>
+          <div class="ta-footer"><span class="cc" id="cc-q11b">0 字</span></div>
+        </div>
+
+        <!-- Q12 AI 功能设计 -->
+        <div class="q" id="wrap-q12">
+          <div class="q-hd">
+            <div class="q-num">12</div>
+            <div class="q-tag">AI 功能设计</div>
+            <div class="q-text">AI 功能小设计</div>
+            <div class="q-pts">20 分</div>
+          </div>
+          <div class="ctx">
+            <strong>背景：</strong>2026 年，大模型与传感技术已广泛用于智能家居产品。请为<strong>智能加湿器或智能塔扇</strong>设计一个小的 AI 功能（例如：根据用户习惯自动调节湿度、自然语言控制、睡眠场景联动、异常提醒等，可自拟）。
+          </div>
+          <div class="ask-list">
+            <div class="ask-row">
+              <span class="ask-n">①</span>
+              <span class="ask-t">这个功能解决用户什么问题？一句话说清</span>
+              <span class="ask-s">6 分</span>
+            </div>
+            <div class="ask-row">
+              <span class="ask-n">②</span>
+              <span class="ask-t">为什么这个功能需要 AI，而不是普通定时或按键就能实现？</span>
+              <span class="ask-s">8 分</span>
+            </div>
+            <div class="ask-row">
+              <span class="ask-n">③</span>
+              <span class="ask-t">这个功能你最担心出什么问题（如误判、打扰用户、隐私顾虑）？你打算怎么处理？</span>
+              <span class="ask-s">6 分</span>
+            </div>
+          </div>
+          <div class="ta-label">① 功能解决什么问题（6分）</div>
+          <textarea class="ta" id="q12a" name="q12a" rows="3" placeholder="一句话说清楚：这个 AI 功能帮用户解决了什么痛点……"></textarea>
+          <div class="ta-footer"><span class="cc" id="cc-q12a">0 字</span></div>
+          <div class="ta-label" style="margin-top:14px">② 为什么需要 AI 而非规则（8分）</div>
+          <textarea class="ta" id="q12b" name="q12b" rows="5" placeholder="说明 AI 在这个场景里比固定规则/定时器强在哪里……"></textarea>
+          <div class="ta-footer"><span class="cc" id="cc-q12b">0 字</span></div>
+          <div class="ta-label" style="margin-top:14px">③ 最担心的风险及处理方案（6分）</div>
+          <textarea class="ta" id="q12c" name="q12c" rows="4" placeholder="分析最可能的风险点（误判/打扰/隐私等），以及你打算如何应对……"></textarea>
+          <div class="ta-footer"><span class="cc" id="cc-q12c">0 字</span></div>
+        </div>
+
+        <!-- Q13 英文材料 -->
+        <div class="q" id="wrap-q13">
+          <div class="q-hd">
+            <div class="q-num">13</div>
+            <div class="q-tag">英文材料</div>
+            <div class="q-text">英文材料轻题</div>
+            <div class="q-pts">20 分</div>
+          </div>
+          <div class="ctx en">
+            「Love this fan ― quiet and easy to set up. Only complaint: the app keeps logging me out every few days, which is really annoying.」
+          </div>
+          <div style="font-size:12px;color:var(--g400);margin:0 0 4px 36px">以上为某风扇在海外电商平台的用户评论</div>
+          <div class="ask-list">
+            <div class="ask-row">
+              <span class="ask-n">①</span>
+              <span class="ask-t">用一句中文概括：用户在夸什么、在抱怨什么？</span>
+              <span class="ask-s">8 分</span>
+            </div>
+            <div class="ask-row">
+              <span class="ask-n">②</span>
+              <span class="ask-t">作为产品经理，这两条信息里你会先跟进哪一条？你第一步会做什么？</span>
+              <span class="ask-s">12 分</span>
+            </div>
+          </div>
+          <div class="ta-label">① 一句话概括（夸什么 + 抱怨什么）（8分）</div>
+          <textarea class="ta" id="q13a" name="q13a" rows="3" placeholder="用一句中文写出用户的核心赞美与核心抱怨……"></textarea>
+          <div class="ta-footer"><span class="cc" id="cc-q13a">0 字</span></div>
+          <div class="ta-label" style="margin-top:14px">② 你会先跟进哪一条？第一步怎么做？（12分）</div>
+          <textarea class="ta" id="q13b" name="q13b" rows="5" placeholder="说明你的判断逻辑（先跟进哪条、为什么），以及你第一步会采取什么行动……"></textarea>
+          <div class="ta-footer"><span class="cc" id="cc-q13b">0 字</span></div>
+        </div>
+
+      </div><!-- /Part 2 -->
+
+      <!-- ════ BONUS ════ -->
+      <div class="card" style="border:1.5px dashed var(--g200)">
+        <div class="sec-hd">
+          <span class="badge gold">附加题</span>
+          <span class="sec-title">选做题</span>
+          <span class="sec-score">+5 分 · 可不作答</span>
+        </div>
+        <div class="q" style="border:none;margin:0;padding:0">
+          <div class="q-hd">
+            <div class="q-num" style="background:var(--g400)">+</div>
+            <div class="q-text">用不超过 100 字，分享一个你在 2026 年真实使用过的 AI 或智能家居产品：最喜欢它哪一点＋想吐槽或改进它哪一点。</div>
+            <div class="q-pts">5 分</div>
+          </div>
+          <div style="margin-left:36px">
+            <textarea class="ta" id="q-bonus" name="bonus" rows="4" maxlength="200" placeholder="真实体验优于术语堆砌，言简意赅即可……"></textarea>
+            <div class="ta-footer" style="padding:0">
+              <span class="cc" id="cc-bonus">0 字</span>
+              <span class="ta-hint">最多 100 字</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ SUBMIT ════ -->
+      <div style="margin-top:20px">
+        <div class="submit-notice">
+          提交前请确认：<strong>基本信息已填写完整</strong>，选择题已作答，简答题已完成三道。提交后<strong>不可修改</strong>，每人只能提交一次。
+        </div>
+        <div id="form-error" style="display:none;color:var(--red);font-size:13px;margin-bottom:12px;padding:10px 14px;background:#FFF0F0;border-radius:6px;border-left:3px solid var(--red)"></div>
+        <button type="button" class="btn" id="btn-submit" onclick="handleSubmit()">
+          提交答卷
+        </button>
+      </div>
+
+    </form>
+  </div><!-- /wrap -->
+</div><!-- /screen-main -->
+
+<!-- ════ SUCCESS MODAL ════ -->
+<div class="modal" id="modal-success">
+  <div class="modal-box">
+    <div class="modal-icon ok">✓</div>
+    <div style="font-size:22px;font-weight:800;margin-bottom:12px">答卷已提交！</div>
+    <div style="font-size:14px;color:var(--g600);line-height:1.9">
+      感谢您参与 <strong style="color:var(--black)">DREO 2027 校园招聘</strong> AIoT 产品经理笔试。<br>
+      招聘团队将在阅卷后与您联系，请留意邮件与电话通知。
+    </div>
+    <div style="margin-top:16px;font-size:12px;color:var(--g400)">· 本次答卷已记录，每人仅限一次。</div>
+  </div>
+</div>
+
+<script>
+// ─── 配置 ───────────────────────────────────────
+const STORAGE_KEY = 'dreo_aiot_2027_v1';
+const EMAIL_TO    = 'kaia.lyu@dreo.com';
+const TOTAL_TIME  = 45 * 60; // seconds
+const ANSWERS     = { q1:'B', q2:'B', q3:'C', q4:'D', q5:'A', q6:'C', q7:'A', q8:'D', q9:'B', q10:'A' };
+const MCQ_LABELS  = {
+  q1:'Q1 逻辑推理', q2:'Q2 数字估算', q3:'Q3 需求优先级',
+  q4:'Q4 AI能力边界', q5:'Q5 全球市场意识', q6:'Q6 数据敏感度',
+  q7:'Q7 智能家居常识', q8:'Q8 用户理解', q9:'Q9 指标选择', q10:'Q10 量级估算'
+};
+
+// ─── 已提交检查 ──────────────────────────────────
+(function checkDone(){
+  const rec = localStorage.getItem(STORAGE_KEY);
+  if(rec){
+    const d = JSON.parse(rec);
+    document.getElementById('screen-main').style.display = 'none';
+    document.getElementById('screen-done').style.display = 'block';
+    document.getElementById('done-time').textContent = d.time || '此前';
+  }
+})();
+
+// ─── 计时器 ──────────────────────────────────────
+let timeLeft = TOTAL_TIME;
+let startedAt = Date.now();
+const timerEl = document.getElementById('timer');
+
+function fmt(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return `⏱ ${m}:${sec}`;
+}
+
+const timerInterval = setInterval(()=>{
+  timeLeft--;
+  if(timeLeft < 0){ timeLeft = 0; clearInterval(timerInterval); autoSubmit(); return; }
+  timerEl.textContent = fmt(timeLeft);
+  if(timeLeft <= 300){ timerEl.className = timeLeft <= 60 ? 'danger' : 'warn'; }
+}, 1000);
+
+function usedTime(){
+  const s = Math.floor((Date.now() - startedAt) / 1000);
+  const m = Math.floor(s/60), sec = s%60;
+  return `${m} 分 ${sec} 秒`;
+}
+
+// ─── 进度追踪 ─────────────────────────────────────
+const TOTAL_Q = 14; // 10 mcq + 4 ta groups (11a,11b,12,13 counted as 4)
+function updateProgress(){
+  let done = 0;
+  ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'].forEach(n=>{
+    if(document.querySelector(`input[name="${n}"]:checked`)) done++;
+  });
+  ['q11a','q11b','q12a','q12b','q12c','q13a','q13b'].forEach(id=>{
+    if((document.getElementById(id)||{}).value?.trim()) done++;
+  });
+  const pct = Math.round(done/17*100);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('prog-txt').textContent = `完成度 ${done}/17`;
+}
+
+// ─── 字数统计 ─────────────────────────────────────
+['q11a','q11b','q12a','q12b','q12c','q13a','q13b'].forEach(id=>{
+  const ta = document.getElementById(id);
+  const cc = document.getElementById('cc-'+id);
+  if(!ta||!cc) return;
+  ta.addEventListener('input',()=>{
+    const n = ta.value.length;
+    cc.textContent = n+' 字';
+    updateProgress();
+  });
+});
+
+// bonus special (max 100)
+const bonusTa = document.getElementById('q-bonus');
+const bonusCc = document.getElementById('cc-bonus');
+bonusTa.addEventListener('input',()=>{
+  const n = bonusTa.value.length;
+  bonusCc.textContent = n+' 字';
+  bonusCc.className = n>100 ? 'cc over' : 'cc';
+});
+
+// ─── 选项交互 ─────────────────────────────────────
+document.querySelectorAll('.opts').forEach(group=>{
+  group.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click',()=>{
+      group.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+      opt.classList.add('sel');
+      updateProgress();
+    });
+  });
+});
+
+// ─── 评分 ─────────────────────────────────────────
+function scoreChoices(){
+  let score=0, detail={};
+  Object.keys(ANSWERS).forEach(q=>{
+    const el = document.querySelector(`input[name="${q}"]:checked`);
+    const ans = el ? el.value : '（未作答）';
+    const correct = ANSWERS[q];
+    const ok = ans === correct;
+    if(ok) score += 4;
+    detail[q] = { ans, correct, ok };
+  });
+  return { score, detail };
+}
+
+// ─── 格式化邮件内容 ───────────────────────────────
+function buildPayload(autoSubmit=false){
+  const name   = document.getElementById('i-name').value.trim();
+  const school = document.getElementById('i-school').value.trim();
+  const major  = document.getElementById('i-major').value.trim();
+  const year   = document.getElementById('i-year').value.trim();
+  const phone  = document.getElementById('i-phone').value.trim();
+  const email  = document.getElementById('i-email').value.trim();
+
+  const { score, detail } = scoreChoices();
+  const correct = Object.values(detail).filter(d=>d.ok).length;
+  const now = new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'});
+
+  const payload = {
+    _subject: `【DREO校招笔试 2027】${name||'（未填姓名）'} · 选择题 ${score}/40${autoSubmit?' [时间到自动提交]':''}`,
+    _template: 'table',
+    _captcha: 'false',
+    _replyto: email || '',
+    '01_姓名': name,
+    '02_学校': school,
+    '03_专业': major,
+    '04_毕业年份': year,
+    '05_手机': phone,
+    '06_邮箱': email,
+    '07_选择题得分': `${score} / 40 分（${correct}/10 题正确）${autoSubmit ? ' ⚠️ 时间到自动提交' : ''}`,
+  };
+
+  // MCQ detail
+  let qi = 8;
+  Object.keys(ANSWERS).forEach(q=>{
+    const d = detail[q];
+    const label = MCQ_LABELS[q] || q.toUpperCase();
+    const num = qi.toString().padStart(2,'0');
+    payload[`${num}_${label}`] = `考生作答: ${d.ans}  |  正确答案: ${d.correct}  |  ${d.ok ? '✓ 正确 +4分' : '✗ 错误 +0分'}`;
+    qi++;
+  });
+
+  payload['18_Q11①选择2项与理由(12分)']    = document.getElementById('q11a').value.trim() || '（未作答）';
+  payload['19_Q11②未选项何时适合做(8分)']   = document.getElementById('q11b').value.trim() || '（未作答）';
+  payload['20_Q12①功能解决什么问题(6分)']   = document.getElementById('q12a').value.trim() || '（未作答）';
+  payload['21_Q12②为何需要AI(8分)']         = document.getElementById('q12b').value.trim() || '（未作答）';
+  payload['22_Q12③担心的风险(6分)']         = document.getElementById('q12c').value.trim() || '（未作答）';
+  payload['23_Q13①评论概括(8分)']           = document.getElementById('q13a').value.trim() || '（未作答）';
+  payload['24_Q13②跟进方向与第一步(12分)']  = document.getElementById('q13b').value.trim() || '（未作答）';
+  payload['25_附加题(+5分，可选)']           = document.getElementById('q-bonus').value.trim() || '（未作答）';
+  payload['26_提交时间']                      = now;
+  payload['27_答题用时']                      = usedTime();
+
+  return payload;
+}
+
+// ─── 校验 ─────────────────────────────────────────
+function validate(){
+  const errs = [];
+  const req = [
+    ['i-name','姓名'],['i-school','学校'],['i-major','专业'],
+    ['i-year','毕业年份'],['i-phone','手机号'],['i-email','邮箱']
+  ];
+  req.forEach(([id,label])=>{
+    const v = document.getElementById(id).value.trim();
+    if(!v) errs.push(`请填写${label}`);
+  });
+  const unanswered = ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10']
+    .filter(q=>!document.querySelector(`input[name="${q}"]:checked`));
+  if(unanswered.length){
+    errs.push(`选择题第 ${unanswered.map(q=>q.slice(1)).join('、')} 题未作答`);
+  }
+  ['q11a','q11b','q12a','q12b','q12c','q13a','q13b'].forEach(id=>{
+    if(!document.getElementById(id).value.trim())
+      errs.push(`简答题 ${id.replace('q','Q').replace(/([a-c])$/,'·$1')} 未作答`);
+  });
+  return errs;
+}
+
+// ─── 提交 ─────────────────────────────────────────
+async function sendEmail(payload){
+  const resp = await fetch(`https://formsubmit.co/ajax/${EMAIL_TO}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if(!resp.ok) throw new Error('HTTP '+resp.status);
+  return await resp.json();
+}
+
+function markDone(){
+  const now = new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'});
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ time: now }));
+}
+
+function showSuccess(){
+  clearInterval(timerInterval);
+  document.getElementById('modal-success').classList.add('show');
+  // disable form
+  document.getElementById('test-form').querySelectorAll('input,textarea,button').forEach(el=>el.disabled=true);
+}
+
+async function handleSubmit(){
+  const errs = validate();
+  const errBox = document.getElementById('form-error');
+  if(errs.length){
+    errBox.style.display = 'block';
+    errBox.textContent = '请检查以下内容：' + errs.join('；');
+    errBox.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  errBox.style.display = 'none';
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> 提交中…';
+
+  try {
+    const payload = buildPayload(false);
+    await sendEmail(payload);
+    markDone();
+    showSuccess();
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '提交答卷';
+    errBox.style.display = 'block';
+    errBox.textContent = '提交失败，请检查网络后重试。如问题持续，请联系招聘组。（错误：'+e.message+'）';
+    errBox.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+}
+
+async function autoSubmit(){
+  clearInterval(timerInterval);
+  timerEl.textContent = '⏱ 00:00';
+  timerEl.className = 'danger';
+
+  // brief alert then auto-send
+  const payload = buildPayload(true);
+  try {
+    await sendEmail(payload);
+    markDone();
+  } catch(e) {
+    // silent fail on auto-submit, still mark done locally
+    markDone();
+  }
+  showSuccess();
+}
+
+// initial progress
+updateProgress();
+</script>
+</body>
+</html>
